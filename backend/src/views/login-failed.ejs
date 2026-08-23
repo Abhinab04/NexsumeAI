@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Failed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Fira Mono', monospace;
+      color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .card {
+      padding: 50px 30px;
+      border-radius: 12px;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .icon {
+      font-size: 90px;
+      color: #e74c3c;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #e74c3c;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 30px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      border: 2px solid rgba(0, 0, 0, 0.349);
+      background: transparent;
+      color: black;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background: black;
+      color: #fff;
+    }
+
+    .info {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #222;
+      background: #e6e6e6;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 12px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">❌</div>
+    <h1>Login Failed</h1>
+    <p>We couldn’t log you in. Please check your email, and try again.</p>
+    <a href="<%= fontend_url %>/signin" class="btn">Sign in Again</a>
+
+    <div class="info">
+      ⚠️ <strong>Note:</strong> Your login token expires in <strong>20 minutes</strong>.<br>
+      Do not share this link or token with anyone for security reasons.
+    </div>
+  </div>
+</body>
+</html>

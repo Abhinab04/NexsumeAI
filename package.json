@@ -1,0 +1,30 @@
+{
+  "name": "nexsume",
+  "version": "1.0.0",
+  "description": "Nexsume.ai - Fullstack project with frontend & backend",
+  "license": "MIT",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build": "npm run build:frontend && npm run build:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run check",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "format": "prettier . --write --ignore-path .gitignore",
+    "start:frontend": "cd frontend && npm run preview",
+    "start:backend": "cd backend && npm start",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.0",
+    "ejs": "^3.1.10",
+    "puppeteer": "^25.8.0",
+    "tar": "^7.5.22"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}

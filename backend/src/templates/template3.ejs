@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-7pt}]
+
+\begin{document}
+\fontfamily{ppl}\selectfont
+\noindent
+\begin{center}
+    \textbf{\Huge <%- personalInfo.fullName %>} \\[5pt]
+    <% if (summary) { %>
+    \small{<%- summary %>} \\[5pt]
+    <% } %>
+    \href{mailto:<%- personalInfo.email %>}{<%- personalInfo.email %>} $|$ 
+    \href{tel:<%- personalInfo.phone %>}{<%- personalInfo.phone %>} 
+    <% if (personalInfo.github) { %>
+    $|$ \href{<%- personalInfo.github %>}{GitHub}
+    <% } %>
+    <% if (personalInfo.linkedin) { %>
+    $|$ \href{<%- personalInfo.linkedin %>}{LinkedIn}
+    <% } %>
+    <% if (personalInfo.portfolio) { %>
+    $|$ \href{<%- personalInfo.portfolio %>}{Portfolio}
+    <% } %>
+\end{center}
+
+\vspace{10pt}
+
+\section{Education}
+    \begin{itemize}[leftmargin=*]
+        <% education.forEach(function(edu) { %>
+        \item \textbf{<%- edu.degree %> \hfill (<%- edu.startDate %> - <%- edu.endDate %>)}\newline{<%- edu.institution %>}\newline{<% if (edu.gpa) { %>Marks/GPA: <%- edu.gpa %><% } %>}
+        <% }) %>
+    \end{itemize}
+ 
+\section{Skills}
+    \begin{itemize}[leftmargin=*]
+        <% if (skills.languages && skills.languages.length > 0) { %>
+        \item \textbf{Languages} \newline
+        {\footnotesize <%- skills.languages.join(', ') %>}
+        <% } %>
+        <% if (skills.frameworks && skills.frameworks.length > 0) { %>
+        \item \textbf{Frameworks} \newline
+        {\footnotesize <%- skills.frameworks.join(', ') %>}
+        <% } %>
+        <% if (skills.tools && skills.tools.length > 0) { %>
+        \item \textbf{Tools} \newline
+        {\footnotesize <%- skills.tools.join(', ') %>}
+        <% } %>
+    \end{itemize}
+
+\section{Projects}
+    \begin{itemize}[leftmargin=*]
+        <% projects.forEach(function(proj) { %>
+        \item \textbf{<%- proj.name %>} <% if (proj.link) { %>(\href{<%- proj.link %>}{Link})<% } %> \newline
+        {\footnotesize <%- proj.description.join(' ') %>}
+        <% }) %>
+    \end{itemize}
+    
+\section{Experience}
+    \begin{itemize}[leftmargin=*]
+        <% experience.forEach(function(exp) { %>
+        \item \textbf{<%- exp.company %> \hfill <%- exp.startDate %> - <%- exp.endDate %>}\newline{<%- exp.role %>}
+        \begin{itemize}
+            <% exp.description.forEach(function(desc) { %>
+            \item <%- desc %>
+            <% }) %>
+        \end{itemize}
+        <% }) %>
+    \end{itemize}
+        
+\end{document}
