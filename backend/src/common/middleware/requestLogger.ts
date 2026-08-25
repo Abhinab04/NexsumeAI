@@ -4,20 +4,32 @@ import { StatusCodes } from "http-status-codes";
 import pino from "pino";
 import pinoHttp from "pino-http";
 
-import { env } from "@/common/utils/env";
+import { env } from "../utils/env.js";
 
 const logger = pino({
   level: env.isProduction ? "info" : "debug",
-  transport: env.isProduction ? undefined : { target: "pino-pretty" },
+  transport: env.isProduction
+    ? undefined
+    : { target: "pino-pretty" },
 });
 
 const getLogLevel = (status: number) => {
-  if (status >= StatusCodes.INTERNAL_SERVER_ERROR) return "error";
-  if (status >= StatusCodes.BAD_REQUEST) return "warn";
+  if (status >= StatusCodes.INTERNAL_SERVER_ERROR) {
+    return "error";
+  }
+
+  if (status >= StatusCodes.BAD_REQUEST) {
+    return "warn";
+  }
+
   return "info";
 };
 
-const addRequestId = (req: Request, res: Response, next: NextFunction) => {
+const addRequestId = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const existingId = req.headers["x-request-id"] as string;
   const requestId = existingId || randomUUID();
 
@@ -30,12 +42,19 @@ const addRequestId = (req: Request, res: Response, next: NextFunction) => {
 
 const httpLogger = pinoHttp({
   logger,
-  genReqId: (req) => req.headers["x-request-id"] as string,
-  customLogLevel: (_req, res) => getLogLevel(res.statusCode),
-  customSuccessMessage: (req) => `${req.method} ${req.url} completed`,
+
+  genReqId: (req) =>
+    req.headers["x-request-id"] as string,
+
+  customLogLevel: (_req, res) =>
+    getLogLevel(res.statusCode),
+
+  customSuccessMessage: (req) =>
+    `${req.method} ${req.url} completed`,
+
   customErrorMessage: (_req, res) =>
     `Request failed with status code: ${res.statusCode}`,
-  // Only log response bodies in development
+
   serializers: {
     req: (req) => ({
       method: req.method,
@@ -52,12 +71,19 @@ const captureResponseBody = (
 ) => {
   if (!env.isProduction) {
     const originalSend = res.send;
+
     res.send = function (body) {
       res.locals.responseBody = body;
+
       return originalSend.call(this, body);
     };
   }
+
   next();
 };
 
-export default [addRequestId, captureResponseBody, httpLogger];
+export default [
+  addRequestId,
+  captureResponseBody,
+  httpLogger,
+];
