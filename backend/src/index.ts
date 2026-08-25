@@ -1,6 +1,6 @@
-import { env } from "./common/utils/env";
-import { app, logger } from "./server";
-import connectDB from "./common/utils/database";
+import { env } from "./common/utils/env.js";
+import { app, logger } from "./server.js";
+import connectDB from "./common/utils/database.js";
 
 const startServer = async () => {
   try {
