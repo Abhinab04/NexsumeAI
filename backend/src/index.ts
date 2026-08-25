@@ -1,5 +1,5 @@
-import { env } from "@/common/utils/env";
-import { app, logger } from "@/server";
+import { env } from "./common/utils/env";
+import { app, logger } from "./server";
 import connectDB from "./common/utils/database";
 
 const startServer = async () => {
@@ -7,25 +7,25 @@ const startServer = async () => {
     await connectDB();
 
     const server = app.listen(env.PORT, () => {
-      const { NODE_ENV, HOST, PORT } = env;
       logger.info(
-        `Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`,
+        `Server (${env.NODE_ENV}) running at http://${env.HOST}:${env.PORT}`
       );
     });
 
-    const onCloseSignal = () => {
-      logger.info("sigint received, shutting down");
+    const shutdown = () => {
+      logger.info("Shutting down server...");
       server.close(() => {
-        logger.info("server closed");
-        process.exit();
+        logger.info("Server closed");
+        process.exit(0);
       });
+
       setTimeout(() => process.exit(1), 10000).unref();
     };
 
-    process.on("SIGINT", onCloseSignal);
-    process.on("SIGTERM", onCloseSignal);
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
   } catch (err) {
-    logger.error(`❌ Failed to start server:${err}`);
+    logger.error("Failed to start server", err);
     process.exit(1);
   }
 };
