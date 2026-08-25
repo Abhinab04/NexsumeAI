@@ -21,56 +21,59 @@ import { Toaster } from "./components/Sonner/sonner";
 
 function App() {
   return (
-    <div>
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
 
-          {/* Landing Page */}
+        {/* Public */}
+        <Route
+          path="/"
+          element={<LandingPage />}
+        />
+
+        <Route
+          path="/signin"
+          element={<SigninPage />}
+        />
+
+        {/* Clerk sign-in SSO callback */}
+        <Route
+          path="/signin/sso-callback"
+          element={
+            <AuthenticateWithRedirectCallback />
+          }
+        />
+
+        {/* Clerk sign-up SSO callback */}
+        <Route
+          path="/signin/create/sso-callback"
+          element={
+            <AuthenticateWithRedirectCallback />
+          }
+        />
+
+        {/* Dashboard */}
+        <Route element={<DashboardLayout />}>
           <Route
-            path="/"
-            element={<LandingPage />}
+            path="/dashboard"
+            element={<DashboardPage />}
           />
 
-          {/* Sign In */}
           <Route
-            path="/signin"
-            element={<SigninPage />}
+            path="/editor"
+            element={<EditorPage />}
           />
+        </Route>
 
-          {/* Clerk SSO Callback */}
-          <Route
-            path="/signin/sso-callback"
-            element={
-              <AuthenticateWithRedirectCallback />
-            }
-          />
+        {/* 404 */}
+        <Route
+          path="*"
+          element={<PageNotFound />}
+        />
 
-          {/* Dashboard Layout */}
-          <Route element={<DashboardLayout />}>
-
-            <Route
-              path="/dashboard"
-              element={<DashboardPage />}
-            />
-
-            <Route
-              path="/editor"
-              element={<EditorPage />}
-            />
-
-          </Route>
-
-          {/* 404 */}
-          <Route
-            path="*"
-            element={<PageNotFound />}
-          />
-
-        </Routes>
-      </BrowserRouter>
+      </Routes>
 
       <Toaster />
-    </div>
+    </BrowserRouter>
   );
 }
 
