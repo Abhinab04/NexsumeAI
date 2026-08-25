@@ -1,18 +1,23 @@
-import { AuthRepository } from "@/api/auth/authRepository";
-import { ServiceResponse } from "@/common/models/serviceResponse";
-import { IUser } from "@/api/user/userModel";
-import { AuthLoginSchema } from "./authModel";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-import { logger } from "@/server";
-import { sendLoginTokenEmail } from "@/common/utils/email";
+
+import { AuthRepository } from "./authRepository.js";
+import { AuthLoginSchema } from "./authModel.js";
+
+import { ServiceResponse } from "../../common/models/serviceResponse.js";
+import { sendLoginTokenEmail } from "../../common/utils/email.js";
+import { logger } from "../../server.js";
+
+import { IUser } from "../user/userModel.js";
 
 type AuthData = z.infer<typeof AuthLoginSchema>;
 
 class AuthService {
   private authRepository: AuthRepository;
 
-  constructor(repository: AuthRepository = new AuthRepository()) {
+  constructor(
+    repository: AuthRepository = new AuthRepository(),
+  ) {
     this.authRepository = repository;
   }
 
@@ -21,7 +26,9 @@ class AuthService {
     userAgent: string,
   ): Promise<ServiceResponse<null>> {
     try {
-      const user = await this.authRepository.createUser(data);
+      const user =
+        await this.authRepository.createUser(data);
+
       if (!user) {
         return ServiceResponse.failure(
           "Login Failed",
@@ -30,11 +37,16 @@ class AuthService {
         );
       }
 
-      const loginToken = await this.authRepository.generateLoginToken(
-        user._id as string,
-      );
+      const loginToken =
+        await this.authRepository.generateLoginToken(
+          user._id as string,
+        );
+
       if (!loginToken) {
-        logger.error("Failed to genereate loginToken.");
+        logger.error(
+          "Failed to generate loginToken.",
+        );
+
         return ServiceResponse.failure(
           "Login Failed",
           null,
@@ -42,11 +54,13 @@ class AuthService {
         );
       }
 
-      const isLoginTokenEmailSend = await sendLoginTokenEmail(
-        data.email,
-        userAgent,
-        loginToken,
-      );
+      const isLoginTokenEmailSend =
+        await sendLoginTokenEmail(
+          data.email,
+          userAgent,
+          loginToken,
+        );
+
       if (isLoginTokenEmailSend == null) {
         return ServiceResponse.failure(
           "Login Failed",
@@ -56,13 +70,17 @@ class AuthService {
       }
 
       return ServiceResponse.success(
-        "Please check you email to login",
+        "Please check your email to login",
         null,
         StatusCodes.OK,
       );
     } catch (err) {
-      const errorMessage = `Error while logingin user with email ${data.email}:, ${(err as Error).message}`;
+      const errorMessage = `Error while logging in user with email ${data.email}: ${
+        (err as Error).message
+      }`;
+
       logger.error(errorMessage);
+
       return ServiceResponse.failure(
         "Login Failed",
         null,
@@ -74,13 +92,18 @@ class AuthService {
   async loginWithToken(
     token: string,
   ): Promise<
-    ServiceResponse<Pick<
-      IUser,
-      "email" | "accessToken" | "refreshToken"
-    > | null>
+    ServiceResponse<
+      Pick<
+        IUser,
+        "email" | "accessToken" | "refreshToken"
+      > | null
+    >
   > {
     try {
-      const loginToken = await this.authRepository.getLoginToken(token);
+      const loginToken =
+        await this.authRepository.getLoginToken(
+          token,
+        );
 
       if (!loginToken || loginToken.expire) {
         return ServiceResponse.failure(
@@ -90,12 +113,20 @@ class AuthService {
         );
       }
 
-      const { email, accessToken, refreshToken } =
+      const {
+        email,
+        accessToken,
+        refreshToken,
+      } =
         await this.authRepository.generateRefreshTokenRefershToken(
           loginToken.userId as string,
         );
 
-      if (email === null || accessToken == null || accessToken === null) {
+      if (
+        email === null ||
+        accessToken == null ||
+        refreshToken == null
+      ) {
         return ServiceResponse.failure(
           "Login Failed",
           null,
@@ -103,7 +134,11 @@ class AuthService {
         );
       }
 
-      const result = await this.authRepository.invalidateLoginToken(token);
+      const result =
+        await this.authRepository.invalidateLoginToken(
+          token,
+        );
+
       if (result === null) {
         return ServiceResponse.failure(
           "Login Failed",
@@ -114,10 +149,18 @@ class AuthService {
 
       return ServiceResponse.success(
         "Login Successful",
-        { email, accessToken, refreshToken },
+        {
+          email,
+          accessToken,
+          refreshToken,
+        },
         StatusCodes.OK,
       );
     } catch (err) {
+      logger.error(
+        `Login with token error: ${err}`,
+      );
+
       return ServiceResponse.failure(
         "Login Failed",
         null,
@@ -126,24 +169,45 @@ class AuthService {
     }
   }
 
-  async refreshAccessToken(incomingRefreshToken: string):Promise<
-    ServiceResponse<Pick<
-      IUser,
-       "_id" | "email" | "accessToken" | "refreshToken"
-    > | null>
-  >  {
+  async refreshAccessToken(
+    incomingRefreshToken: string,
+  ): Promise<
+    ServiceResponse<
+      Pick<
+        IUser,
+        "_id" | "email" | "accessToken" | "refreshToken"
+      > | null
+    >
+  > {
     try {
-      const user = await this.authRepository.getUserFromRefreshToken(incomingRefreshToken);
-      if(user === null) {
-        return ServiceResponse.failure("Invalid RefreshToken", null, StatusCodes.UNAUTHORIZED);
+      const user =
+        await this.authRepository.getUserFromRefreshToken(
+          incomingRefreshToken,
+        );
+
+      if (user === null) {
+        return ServiceResponse.failure(
+          "Invalid RefreshToken",
+          null,
+          StatusCodes.UNAUTHORIZED,
+        );
       }
-    
-      const { _id, email, accessToken, refreshToken } =
+
+      const {
+        _id,
+        email,
+        accessToken,
+        refreshToken,
+      } =
         await this.authRepository.generateRefreshTokenRefershToken(
           user._id as string,
         );
 
-      if (email === null || accessToken == null || accessToken === null) {
+      if (
+        email === null ||
+        accessToken == null ||
+        refreshToken == null
+      ) {
         return ServiceResponse.failure(
           "Login Failed",
           null,
@@ -151,28 +215,63 @@ class AuthService {
         );
       }
 
-
       return ServiceResponse.success(
         "Access Token successfully updated",
-        { _id, email, accessToken, refreshToken },
+        {
+          _id,
+          email,
+          accessToken,
+          refreshToken,
+        },
         StatusCodes.OK,
       );
-    } catch(err) {
-      console.log("Error: ", err);
-      return ServiceResponse.failure("Failed to generate new RefreshToken", null, StatusCodes.INTERNAL_SERVER_ERROR);
+    } catch (err) {
+      logger.error(
+        `Refresh token error: ${err}`,
+      );
+
+      return ServiceResponse.failure(
+        "Failed to generate new RefreshToken",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async logoutUser(userId: string): Promise<ServiceResponse<Pick<IUser, "email"> | null>> {
+  async logoutUser(
+    userId: string,
+  ): Promise<
+    ServiceResponse<Pick<IUser, "email"> | null>
+  > {
     try {
-      const user = await this.authRepository.revokeAccessToken(userId);
-      if(user) {
-        return ServiceResponse.success("Logout Successfully",{ email: user.email }, StatusCodes.OK);
+      const user =
+        await this.authRepository.revokeAccessToken(
+          userId,
+        );
+
+      if (user) {
+        return ServiceResponse.success(
+          "Logout Successfully",
+          {
+            email: user.email,
+          },
+          StatusCodes.OK,
+        );
       }
-      return ServiceResponse.success("Logout Failed", null, StatusCodes.BAD_REQUEST);
+
+      return ServiceResponse.success(
+        "Logout Failed",
+        null,
+        StatusCodes.BAD_REQUEST,
+      );
     } catch (err) {
       logger.error(`Logout Error: ${err}`);
-      return ServiceResponse.success("Logout Failed",null, StatusCodes.BAD_REQUEST);
+
+      return ServiceResponse.success(
+        "Logout Failed",
+        null,
+        StatusCodes.BAD_REQUEST,
+      );
     }
   }
 }
