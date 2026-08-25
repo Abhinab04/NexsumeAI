@@ -6,26 +6,39 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    const server = app.listen(env.PORT, () => {
-      logger.info(
-        `Server (${env.NODE_ENV}) running at http://${env.HOST}:${env.PORT}`
-      );
-    });
+    const server = app.listen(
+      env.PORT,
+      "0.0.0.0",
+      () => {
+        logger.info(
+          `Server (${env.NODE_ENV}) running on port http://${env.HOST}:${env.PORT}`,
+        );
+      },
+    );
 
-    const shutdown = () => {
-      logger.info("Shutting down server...");
+    const onCloseSignal = () => {
+      logger.info("SIGINT/SIGTERM received, shutting down");
+
       server.close(() => {
         logger.info("Server closed");
         process.exit(0);
       });
 
-      setTimeout(() => process.exit(1), 10000).unref();
+      setTimeout(() => {
+        process.exit(1);
+      }, 10000).unref();
     };
 
-    process.on("SIGINT", shutdown);
-    process.on("SIGTERM", shutdown);
-  } catch (err) {
-    logger.error("Failed to start server", err);
+    process.on("SIGINT", onCloseSignal);
+    process.on("SIGTERM", onCloseSignal);
+  } catch (err: unknown) {
+    logger.error(
+      {
+        err,
+      },
+      "Failed to start server",
+    );
+
     process.exit(1);
   }
 };
