@@ -14,7 +14,6 @@ import { create as createTar } from "tar";
 export const pdfGeneratorRouter: Router =
     express.Router();
 
-
 // =====================================================
 // Escape LaTeX
 // =====================================================
@@ -37,34 +36,20 @@ const escapeLatex = (str: string): string => {
         .replace(/\^/g, "\\textasciicircum ");
 };
 
-
 // =====================================================
 // Recursively escape LaTeX
 // =====================================================
 
-const recursivelyEscapeLatex = (
-    obj: any
-): any => {
-
+const recursivelyEscapeLatex = (obj: any): any => {
     if (Array.isArray(obj)) {
-        return obj.map(
-            recursivelyEscapeLatex
-        );
+        return obj.map(recursivelyEscapeLatex);
     }
 
-    if (
-        obj !== null &&
-        typeof obj === "object"
-    ) {
-
+    if (obj !== null && typeof obj === "object") {
         const newObj: any = {};
 
-        for (
-            const [key, value]
-            of Object.entries(obj)
-        ) {
-            newObj[key] =
-                recursivelyEscapeLatex(value);
+        for (const [key, value] of Object.entries(obj)) {
+            newObj[key] = recursivelyEscapeLatex(value);
         }
 
         return newObj;
@@ -77,14 +62,12 @@ const recursivelyEscapeLatex = (
     return obj;
 };
 
-
 // =====================================================
 // Generate PDF
 // =====================================================
 
 pdfGeneratorRouter.post(
     "/generate-pdf",
-
     async (
         req: Request,
         res: Response
@@ -93,11 +76,9 @@ pdfGeneratorRouter.post(
         let tempDir = "";
 
         try {
-
             console.log(
                 "\n========== PDF GENERATION =========="
             );
-
 
             // -----------------------------------------
             // Request data
@@ -108,94 +89,72 @@ pdfGeneratorRouter.post(
                 templateId,
             } = req.body;
 
-
             if (!structuredResume) {
-
                 return res.status(400).json({
                     success: false,
                     message:
                         "Missing structuredResume data",
                 });
-
             }
-
 
             // -----------------------------------------
             // Select template
             // -----------------------------------------
 
-            let templateName =
-                "jakes_resume.ejs";
+            let templateName = "jakes_resume.ejs";
 
             switch (templateId) {
-
                 case "minimal":
-                    templateName =
-                        "minimal.ejs";
+                    templateName = "minimal.ejs";
                     break;
 
                 case "template2":
-                    templateName =
-                        "template2.ejs";
+                    templateName = "template2.ejs";
                     break;
 
                 case "template3":
-                    templateName =
-                        "template3.ejs";
+                    templateName = "template3.ejs";
                     break;
 
                 case "template4":
-                    templateName =
-                        "template4.ejs";
+                    templateName = "template4.ejs";
                     break;
 
                 case "anubhav":
-                    templateName =
-                        "template5.ejs";
+                    templateName = "template5.ejs";
                     break;
 
                 case "jakes_resume":
                 default:
-                    templateName =
-                        "jakes_resume.ejs";
+                    templateName = "jakes_resume.ejs";
                     break;
             }
-
 
             console.log(
                 "Template:",
                 templateName
             );
 
-
             // -----------------------------------------
             // Template path
             // -----------------------------------------
 
-            const templatePath =
-                path.join(
-                    __dirname,
-                    "../templates",
-                    templateName
-                );
-
+            const templatePath = path.join(
+                __dirname,
+                "../templates",
+                templateName
+            );
 
             console.log(
                 "Template path:",
                 templatePath
             );
 
-
-            if (!fs.existsSync(
-                templatePath
-            )) {
-
+            if (!fs.existsSync(templatePath)) {
                 throw new Error(
                     `Template not found: ${templatePath}`
                 );
-
             }
-
 
             // -----------------------------------------
             // Prepare data
@@ -206,7 +165,6 @@ pdfGeneratorRouter.post(
                     structuredResume
                 );
 
-
             // -----------------------------------------
             // EJS → LaTeX
             // -----------------------------------------
@@ -215,24 +173,35 @@ pdfGeneratorRouter.post(
                 "Rendering EJS..."
             );
 
-            const latexString =
+            /*
+             * ejs.renderFile() can be inferred as {} by
+             * TypeScript depending on the installed EJS
+             * type definitions.
+             *
+             * Convert the result explicitly to a string
+             * before using trim(), length, or writing it
+             * to the .tex file.
+             */
+
+            const renderedLatex =
                 await ejs.renderFile(
                     templatePath,
                     safeResume
                 );
 
+            const latexString =
+                typeof renderedLatex === "string"
+                    ? renderedLatex
+                    : String(renderedLatex);
 
             if (
                 !latexString ||
                 latexString.trim().length === 0
             ) {
-
                 throw new Error(
                     "Generated LaTeX is empty"
                 );
-
             }
-
 
             console.log(
                 "LaTeX generated successfully"
@@ -243,7 +212,6 @@ pdfGeneratorRouter.post(
                 latexString.length
             );
 
-
             // -----------------------------------------
             // Temporary directory
             // -----------------------------------------
@@ -253,7 +221,6 @@ pdfGeneratorRouter.post(
                 `nexsume-${crypto.randomUUID()}`
             );
 
-
             fs.mkdirSync(
                 tempDir,
                 {
@@ -261,20 +228,21 @@ pdfGeneratorRouter.post(
                 }
             );
 
+            console.log(
+                "Temporary directory:",
+                tempDir
+            );
 
             // -----------------------------------------
             // Create TEX file
             // -----------------------------------------
 
-            const texFileName =
-                "resume.tex";
+            const texFileName = "resume.tex";
 
-            const texPath =
-                path.join(
-                    tempDir,
-                    texFileName
-                );
-
+            const texPath = path.join(
+                tempDir,
+                texFileName
+            );
 
             fs.writeFileSync(
                 texPath,
@@ -282,28 +250,23 @@ pdfGeneratorRouter.post(
                 "utf8"
             );
 
-
             console.log(
                 "TEX file created:",
                 texPath
             );
 
-
             // -----------------------------------------
-            // CREATE VALID TAR ARCHIVE
+            // CREATE TAR ARCHIVE
             // -----------------------------------------
 
-            const tarPath =
-                path.join(
-                    tempDir,
-                    "resume.tar"
-                );
-
+            const tarPath = path.join(
+                tempDir,
+                "resume.tar"
+            );
 
             console.log(
                 "Creating TAR archive..."
             );
-
 
             await createTar(
                 {
@@ -315,33 +278,25 @@ pdfGeneratorRouter.post(
                 ]
             );
 
-
             console.log(
                 "TAR created:",
                 tarPath
             );
 
-
             // -----------------------------------------
             // Verify TAR exists
             // -----------------------------------------
 
-            if (!fs.existsSync(
-                tarPath
-            )) {
-
+            if (!fs.existsSync(tarPath)) {
                 throw new Error(
                     "TAR archive was not created"
                 );
-
             }
-
 
             const tarBuffer =
                 fs.readFileSync(
                     tarPath
                 );
-
 
             console.log(
                 "TAR size:",
@@ -349,44 +304,32 @@ pdfGeneratorRouter.post(
                 "bytes"
             );
 
-
-            if (
-                tarBuffer.length === 0
-            ) {
-
+            if (tarBuffer.length === 0) {
                 throw new Error(
                     "TAR archive is empty"
                 );
-
             }
-
 
             // -----------------------------------------
             // Native FormData
             // -----------------------------------------
 
-            const formData =
-                new FormData();
+            const formData = new FormData();
 
-
-            const tarBlob =
-                new Blob(
-                    [
-                        tarBuffer,
-                    ],
-                    {
-                        type:
-                            "application/x-tar",
-                    }
-                );
-
+            const tarBlob = new Blob(
+                [
+                    tarBuffer,
+                ],
+                {
+                    type: "application/x-tar",
+                }
+            );
 
             formData.append(
                 "file",
                 tarBlob,
                 "resume.tar"
             );
-
 
             // -----------------------------------------
             // LaTeX.Online /data
@@ -398,7 +341,6 @@ pdfGeneratorRouter.post(
                 "&command=pdflatex" +
                 "&force=true";
 
-
             console.log(
                 "Sending TAR to LaTeX.Online..."
             );
@@ -407,17 +349,14 @@ pdfGeneratorRouter.post(
                 "Target: resume.tex"
             );
 
-
             const compilerResponse =
                 await fetch(
                     compilerUrl,
                     {
                         method: "POST",
-
                         body: formData,
                     }
                 );
-
 
             console.log(
                 "Compiler status:",
@@ -431,18 +370,14 @@ pdfGeneratorRouter.post(
                 )
             );
 
-
             // -----------------------------------------
             // Compiler error
             // -----------------------------------------
 
-            if (
-                !compilerResponse.ok
-            ) {
+            if (!compilerResponse.ok) {
 
                 const errorText =
                     await compilerResponse.text();
-
 
                 console.error(
                     "\n========== LATEX COMPILER ERROR =========="
@@ -462,21 +397,14 @@ pdfGeneratorRouter.post(
                     "=========================================="
                 );
 
-
                 return res.status(500).json({
-
                     success: false,
-
                     message:
                         "Failed to compile LaTeX to PDF",
-
                     details:
                         errorText,
-
                 });
-
             }
-
 
             // -----------------------------------------
             // Read response
@@ -485,19 +413,16 @@ pdfGeneratorRouter.post(
             const arrayBuffer =
                 await compilerResponse.arrayBuffer();
 
-
             const pdfBuffer =
                 Buffer.from(
                     arrayBuffer
                 );
-
 
             console.log(
                 "Received:",
                 pdfBuffer.length,
                 "bytes"
             );
-
 
             // -----------------------------------------
             // Verify PDF magic bytes
@@ -508,22 +433,17 @@ pdfGeneratorRouter.post(
                     .subarray(0, 5)
                     .toString("ascii");
 
-
             console.log(
                 "File header:",
                 header
             );
 
-
-            if (
-                header !== "%PDF-"
-            ) {
+            if (header !== "%PDF-") {
 
                 const responseText =
                     pdfBuffer.toString(
                         "utf8"
                     );
-
 
                 console.error(
                     "Expected PDF but received:"
@@ -536,13 +456,10 @@ pdfGeneratorRouter.post(
                     )
                 );
 
-
                 throw new Error(
                     "LaTeX.Online returned a non-PDF response"
                 );
-
             }
-
 
             // -----------------------------------------
             // SUCCESS
@@ -557,7 +474,6 @@ pdfGeneratorRouter.post(
                 pdfBuffer.length,
                 "bytes"
             );
-
 
             // -----------------------------------------
             // Send PDF
@@ -578,21 +494,17 @@ pdfGeneratorRouter.post(
                 pdfBuffer.length
             );
 
-
             console.log(
                 "Sending PDF to frontend..."
             );
-
 
             console.log(
                 "====================================\n"
             );
 
-
             return res
                 .status(200)
                 .send(pdfBuffer);
-
 
         } catch (error) {
 
@@ -602,10 +514,7 @@ pdfGeneratorRouter.post(
 
             console.error(error);
 
-
-            if (
-                error instanceof Error
-            ) {
+            if (error instanceof Error) {
 
                 console.error(
                     "Message:",
@@ -616,26 +525,19 @@ pdfGeneratorRouter.post(
                     "Stack:",
                     error.stack
                 );
-
             }
-
 
             console.error(
                 "=========================================="
             );
 
-
             return res.status(500).json({
-
                 success: false,
-
                 message:
                     error instanceof Error
                         ? error.message
                         : "PDF generation failed",
-
             });
-
 
         } finally {
 
@@ -670,15 +572,10 @@ pdfGeneratorRouter.post(
                         "Cleanup error:",
                         cleanupError
                     );
-
                 }
-
             }
-
         }
-
     }
 );
-
 
 export default pdfGeneratorRouter;
