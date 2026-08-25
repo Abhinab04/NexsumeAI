@@ -1,8 +1,7 @@
 import nodemailer from "nodemailer";
-import { env } from "@/common/utils/env";
-import { magicLinkEmailTemplate } from "./emailTemplates";
-import { logger } from "@/server";
-import SendmailTransport from "nodemailer/lib/sendmail-transport";
+import { env } from "./env.js";
+import { magicLinkEmailTemplate } from "./emailTemplates.js";
+import { logger } from "../../server.js";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 const transporter = nodemailer.createTransport({
@@ -21,20 +20,32 @@ export const sendLoginTokenEmail = async (
   token: string,
 ): Promise<SMTPTransport.SentMessageInfo["messageId"] | null> => {
   try {
-    const maigcLink = `${env.SERVER_URL}/auth/login/verify/${token}`;
+    const magicLink =
+      `${env.SERVER_URL}/auth/login/verify/${token}`;
+
     const info = await transporter.sendMail({
       from: '"Nexsume.ai" <noreply@nexsume.com>',
       to: email,
       subject: "Magic Link",
-      html: magicLinkEmailTemplate(maigcLink, userAgent),
+      html: magicLinkEmailTemplate(
+        magicLink,
+        userAgent,
+      ),
     });
-    logger.info(`Message send: ${info.messageId}`);
-    logger.info(`Magic: ${maigcLink}`);
+
+    logger.info(`Message sent: ${info.messageId}`);
+    logger.info(`Magic link: ${magicLink}`);
 
     return info.messageId;
   } catch (err) {
-    console.log("Error: ", err);
-    logger.error(`Failed to send email: ${(err as Error).message}`);
+    console.error("Error:", err);
+
+    logger.error(
+      `Failed to send email: ${
+        (err as Error).message
+      }`,
+    );
+
     return null;
   }
 };
