@@ -1,34 +1,54 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 import crypto from "node:crypto";
 
+const uploadDirectory = path.join(
+  process.cwd(),
+  "upload",
+);
+
+// Make sure upload directory exists
+if (!fs.existsSync(uploadDirectory)) {
+  fs.mkdirSync(uploadDirectory, {
+    recursive: true,
+  });
+}
+
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploads = path.join(__dirname, "./upload");
-
-    if (!fs.existsSync(uploads)) {
-      fs.mkdirSync(uploads, { recursive: true });
-    }
-
-    cb(null, uploads);
+  destination: (
+    _req,
+    _file,
+    cb,
+  ) => {
+    cb(null, uploadDirectory);
   },
 
-  filename: function (req, file, cb) {
-    const extension = path.extname(file.originalname).toLowerCase();
+  filename: (
+    _req,
+    file,
+    cb,
+  ) => {
+    const extension = path
+      .extname(file.originalname)
+      .toLowerCase();
 
-    const filename = `${crypto.randomUUID()}${extension}`;
+    const filename =
+      `${crypto.randomUUID()}${extension}`;
 
     cb(null, filename);
   },
 });
 
 const fileFilter: multer.Options["fileFilter"] = (
-  req,
+  _req,
   file,
-  cb
+  cb,
 ) => {
-  const allowedExtensions = [".pdf", ".docx"];
+  const allowedExtensions = [
+    ".pdf",
+    ".docx",
+  ];
 
   const extension = path
     .extname(file.originalname)
@@ -37,8 +57,8 @@ const fileFilter: multer.Options["fileFilter"] = (
   if (!allowedExtensions.includes(extension)) {
     return cb(
       new Error(
-        "Only PDF and DOCX files are allowed"
-      )
+        "Only PDF and DOCX files are allowed",
+      ),
     );
   }
 
@@ -49,6 +69,6 @@ export const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10 MB
+    fileSize: 10 * 1024 * 1024,
   },
 });
