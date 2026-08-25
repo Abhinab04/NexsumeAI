@@ -6,6 +6,7 @@ import express, {
   type Response,
 } from "express";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { pino } from "pino";
 import favicon from "serve-favicon";
 
@@ -26,9 +27,24 @@ import { featureRouter } from "./routes/featuresRouter.js";
 
 import { clerkMiddleware } from "@clerk/express";
 
+// =====================================================
+// ESM __dirname replacement
+// =====================================================
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// =====================================================
+// Logger
+// =====================================================
+
 const logger = pino({
   name: "server start",
 });
+
+// =====================================================
+// Express App
+// =====================================================
 
 const app: Express = express();
 
