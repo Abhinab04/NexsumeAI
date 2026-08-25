@@ -3,9 +3,11 @@ import { FileUpload } from "../../components/Upload/ui/Upload";
 import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { getToken } = useAuth();
 
   const [match, setMatch] = useState(0);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -38,6 +40,10 @@ export default function DashboardPage() {
     };
   }, [resumeFile]);
 
+  // =====================================================
+  // ANALYZE RESUME
+  // =====================================================
+
   const handleAnalyze = async () => {
     if (!resumeFile) {
       toast.error("Please upload a resume first");
@@ -63,166 +69,155 @@ export default function DashboardPage() {
       formData.append("template", "default");
 
       console.log(
-        "========== ANALYZE REQUEST =========="
+        "========== ANALYZE REQUEST ==========",
       );
 
-      console.log(
-        "Resume:",
-        resumeFile.name
-      );
+      console.log("Resume:", resumeFile.name);
+      console.log("Resume type:", resumeFile.type);
+      console.log("Resume size:", resumeFile.size);
 
-      console.log(
-        "Resume type:",
-        resumeFile.type
-      );
-
-      console.log(
-        "Resume size:",
-        resumeFile.size
-      );
-
-      console.log(
-        "JD:",
-        jdFile.name
-      );
-
-      console.log(
-        "JD type:",
-        jdFile.type
-      );
-
-      console.log(
-        "JD size:",
-        jdFile.size
-      );
+      console.log("JD:", jdFile.name);
+      console.log("JD type:", jdFile.type);
+      console.log("JD size:", jdFile.size);
 
       console.log(
         "Backend URL:",
-        import.meta.env.VITE_BACKEND_URL
+        import.meta.env.VITE_BACKEND_URL,
+      );
+
+      // =====================================================
+      // CLERK AUTHENTICATION
+      // =====================================================
+
+      const token = await getToken();
+
+      if (!token) {
+        throw new Error(
+          "Authentication token not available. Please sign in again.",
+        );
+      }
+
+      console.log(
+        "Clerk token obtained successfully",
       );
 
       console.log(
-        "====================================="
+        "=====================================",
       );
+
+      // =====================================================
+      // SEND REQUEST TO BACKEND
+      // =====================================================
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/features/resume_Score/resume_score`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        },
       );
 
       console.log(
-        "========== ANALYZE RESPONSE =========="
+        "========== ANALYZE RESPONSE ==========",
       );
+
+      console.log("Status:", response.status);
+      console.log("Data:", response.data);
 
       console.log(
-        "Status:",
-        response.status
+        "======================================",
       );
 
-      console.log(
-        "Data:",
-        response.data
-      );
+      // =====================================================
+      // PROCESS RESPONSE
+      // =====================================================
 
-      console.log(
-        "======================================"
-      );
-
-      const resultData =
-        response.data.data;
+      const resultData = response.data.data;
 
       if (!resultData) {
         throw new Error(
-          "Backend returned a successful response but no analysis data"
+          "Backend returned a successful response but no analysis data",
         );
       }
 
       setAnalysisResult(resultData);
 
-      setMatch(
-        resultData?.atsScore || 0
-      );
+      setMatch(resultData?.atsScore || 0);
 
       // Automatically show optimized resume
       setPreviewMode("optimized");
 
-      toast.success(
-        "Analysis complete!",
-        {
-          id: "analyze",
-        }
-      );
+      toast.success("Analysis complete!", {
+        id: "analyze",
+      });
     } catch (error) {
       console.error(
-        "\n========== ANALYZE ERROR =========="
+        "\n========== ANALYZE ERROR ==========",
       );
 
       if (axios.isAxiosError(error)) {
-        console.error(
-          "Axios Error:",
-          error
-        );
+        console.error("Axios Error:", error);
 
         console.error(
           "Status:",
-          error.response?.status
+          error.response?.status,
         );
 
         console.error(
           "Status Text:",
-          error.response?.statusText
+          error.response?.statusText,
         );
 
         console.error(
           "Backend Response:",
-          error.response?.data
+          error.response?.data,
         );
 
         console.error(
           "Backend Message:",
-          error.response?.data?.message
+          error.response?.data?.message,
         );
 
         console.error(
           "Request URL:",
-          error.config?.url
+          error.config?.url,
         );
 
         console.error(
           "Request Method:",
-          error.config?.method
+          error.config?.method,
         );
       } else if (error instanceof Error) {
-        console.error(
-          "Error:",
-          error
-        );
+        console.error("Error:", error);
 
         console.error(
           "Message:",
-          error.message
+          error.message,
         );
 
         console.error(
           "Stack:",
-          error.stack
+          error.stack,
         );
       } else {
         console.error(
           "Unknown error:",
-          error
+          error,
         );
       }
 
       console.error(
-        "===================================\n"
+        "===================================\n",
       );
 
       toast.error(
         "Failed to analyze resume",
         {
           id: "analyze",
-        }
+        },
       );
     } finally {
       setIsLoading(false);
@@ -237,7 +232,6 @@ export default function DashboardPage() {
       {/* ================================================= */}
 
       <header className="mb-12">
-
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-indigo-200 to-pink-400 bg-clip-text text-transparent animate-gradient">
           Dashboard
         </h1>
@@ -245,9 +239,7 @@ export default function DashboardPage() {
         <p className="text-gray-400 mt-2 text-lg">
           Your AI-powered resume optimizer 🚀
         </p>
-
       </header>
-
 
       {/* ================================================= */}
       {/* UPLOAD SECTION */}
@@ -258,51 +250,35 @@ export default function DashboardPage() {
         {/* Resume */}
 
         <UploadCard title="Upload Resume">
-
           <div className="w-full max-w-xl mx-auto min-h-80 border border-dashed bg-white dark:border-neutral-700 dark:bg-neutral-900 border-neutral-200 rounded-lg">
-
             <FileUpload
               onChange={(files) => {
-                setResumeFile(
-                  files[0] || null
-                );
+                setResumeFile(files[0] || null);
 
                 // Reset analysis when new resume is uploaded
                 setAnalysisResult(null);
 
                 setMatch(0);
 
-                setPreviewMode(
-                  "original"
-                );
+                setPreviewMode("original");
               }}
             />
-
           </div>
-
         </UploadCard>
-
 
         {/* Job Description */}
 
         <UploadCard title="Job Description">
-
           <div className="w-full max-w-xl mx-auto min-h-80 border border-dashed bg-white dark:border-neutral-700 dark:bg-neutral-900 border-neutral-200 rounded-lg">
-
             <FileUpload
               onChange={(files) => {
-                setJdFile(
-                  files[0] || null
-                );
+                setJdFile(files[0] || null);
               }}
             />
-
           </div>
-
         </UploadCard>
 
       </section>
-
 
       {/* ================================================= */}
       {/* ATS RESULT */}
@@ -321,7 +297,6 @@ export default function DashboardPage() {
               <h2 className="text-2xl font-bold text-gray-200">
                 ATS Score
               </h2>
-
 
               <div className="relative w-40 h-40 flex items-center justify-center rounded-full border-8 border-gray-800 bg-gray-900 shadow-inner">
 
@@ -348,13 +323,11 @@ export default function DashboardPage() {
 
               </div>
 
-
               <p className="text-center text-gray-300 text-sm italic">
                 {analysisResult.scoreJustification}
               </p>
 
             </div>
-
 
             {/* KEYWORDS */}
 
@@ -363,7 +336,6 @@ export default function DashboardPage() {
               {/* Matched */}
 
               <div>
-
                 <h3 className="text-xl font-semibold mb-3 text-emerald-400 flex items-center gap-2">
                   <span>✅</span>
                   Matched Keywords
@@ -374,7 +346,7 @@ export default function DashboardPage() {
                   {analysisResult.matchedKeywords?.map(
                     (
                       kw: string,
-                      i: number
+                      i: number,
                     ) => (
                       <span
                         key={i}
@@ -382,18 +354,15 @@ export default function DashboardPage() {
                       >
                         {kw}
                       </span>
-                    )
+                    ),
                   )}
 
                 </div>
-
               </div>
-
 
               {/* Missing */}
 
               <div>
-
                 <h3 className="text-xl font-semibold mb-3 text-rose-400 flex items-center gap-2">
                   <span>❌</span>
                   Missing Keywords
@@ -404,7 +373,7 @@ export default function DashboardPage() {
                   {analysisResult.missingKeywords?.map(
                     (
                       kw: string,
-                      i: number
+                      i: number,
                     ) => (
                       <span
                         key={i}
@@ -412,17 +381,15 @@ export default function DashboardPage() {
                       >
                         {kw}
                       </span>
-                    )
+                    ),
                   )}
 
                 </div>
-
               </div>
 
             </div>
 
           </div>
-
 
           {/* ================================================= */}
           {/* RECOMMENDATIONS */}
@@ -433,7 +400,6 @@ export default function DashboardPage() {
             {/* Improvements */}
 
             <div>
-
               <h3 className="text-xl font-semibold mb-4 text-indigo-300 flex items-center gap-2">
                 <span>💡</span>
                 AI Recommendations & Improvements
@@ -444,23 +410,20 @@ export default function DashboardPage() {
                 {analysisResult.keyImprovements?.map(
                   (
                     imp: string,
-                    i: number
+                    i: number,
                   ) => (
                     <li key={i}>
                       {imp}
                     </li>
-                  )
+                  ),
                 )}
 
               </ul>
-
             </div>
-
 
             {/* Roadmap */}
 
             <div>
-
               <h3 className="text-xl font-semibold mb-4 text-blue-300 flex items-center gap-2">
                 <span>📚</span>
                 Learning Roadmap
@@ -471,20 +434,18 @@ export default function DashboardPage() {
                 {analysisResult.learningRoadmap?.map(
                   (
                     road: string,
-                    i: number
+                    i: number,
                   ) => (
                     <li key={i}>
                       {road}
                     </li>
-                  )
+                  ),
                 )}
 
               </ul>
-
             </div>
 
           </div>
-
 
           {/* Tailor */}
 
@@ -501,7 +462,7 @@ export default function DashboardPage() {
                       result:
                         analysisResult,
                     },
-                  }
+                  },
                 )
               }
             />
@@ -528,7 +489,6 @@ export default function DashboardPage() {
 
             </div>
 
-
             <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4 justify-end">
 
               <ActionButton
@@ -538,12 +498,8 @@ export default function DashboardPage() {
                     ? "Analyzing..."
                     : "Analyze Resume"
                 }
-                onClick={
-                  handleAnalyze
-                }
-                disabled={
-                  isLoading
-                }
+                onClick={handleAnalyze}
+                disabled={isLoading}
               />
 
             </div>
@@ -553,7 +509,6 @@ export default function DashboardPage() {
         </section>
 
       )}
-
 
       {/* ================================================= */}
       {/* RESUME PREVIEW */}
@@ -568,7 +523,6 @@ export default function DashboardPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8">
 
             <div>
-
               <h2 className="text-xl md:text-2xl font-semibold text-gray-200">
                 Resume Preview
               </h2>
@@ -576,9 +530,7 @@ export default function DashboardPage() {
               <p className="text-gray-400 text-sm mt-1">
                 Compare your original resume with the AI-optimized version.
               </p>
-
             </div>
-
 
             {/* Toggle */}
 
@@ -586,37 +538,26 @@ export default function DashboardPage() {
 
               <PreviewButton
                 text="Original Resume"
-                active={
-                  previewMode ===
-                  "original"
-                }
+                active={previewMode === "original"}
                 onClick={() =>
-                  setPreviewMode(
-                    "original"
-                  )
+                  setPreviewMode("original")
                 }
               />
 
               <PreviewButton
                 text="Optimized Resume"
-                active={
-                  previewMode ===
-                  "optimized"
-                }
+                active={previewMode === "optimized"}
                 disabled={
                   !analysisResult?.structuredResume
                 }
                 onClick={() =>
-                  setPreviewMode(
-                    "optimized"
-                  )
+                  setPreviewMode("optimized")
                 }
               />
 
             </div>
 
           </div>
-
 
           {/* ================================================= */}
           {/* ORIGINAL RESUME */}
@@ -629,7 +570,6 @@ export default function DashboardPage() {
               <div className="px-5 py-3 border-b border-gray-700 bg-gray-900 flex items-center justify-between">
 
                 <div>
-
                   <p className="text-gray-200 font-medium">
                     Original Resume
                   </p>
@@ -637,7 +577,6 @@ export default function DashboardPage() {
                   <p className="text-gray-500 text-xs">
                     {resumeFile.name}
                   </p>
-
                 </div>
 
                 <span className="text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-400">
@@ -646,14 +585,11 @@ export default function DashboardPage() {
 
               </div>
 
-
               <div className="h-[850px] bg-white">
 
                 {resumePreviewUrl ? (
                   <iframe
-                    src={
-                      resumePreviewUrl
-                    }
+                    src={resumePreviewUrl}
                     title="Original Resume Preview"
                     className="w-full h-full border-0"
                   />
@@ -669,7 +605,6 @@ export default function DashboardPage() {
 
           )}
 
-
           {/* ================================================= */}
           {/* OPTIMIZED RESUME */}
           {/* ================================================= */}
@@ -681,7 +616,6 @@ export default function DashboardPage() {
               <div className="px-5 py-3 border-b border-gray-700 bg-gray-900 flex items-center justify-between">
 
                 <div>
-
                   <p className="text-white font-medium">
                     Optimized Resume
                   </p>
@@ -689,7 +623,6 @@ export default function DashboardPage() {
                   <p className="text-gray-400 text-xs">
                     AI-generated resume based on your original resume
                   </p>
-
                 </div>
 
                 <span className="text-xs px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300">
@@ -698,21 +631,16 @@ export default function DashboardPage() {
 
               </div>
 
-
               {analysisResult?.structuredResume ? (
 
                 <OptimizedResumePreview
-                  resume={
-                    analysisResult.structuredResume
-                  }
+                  resume={analysisResult.structuredResume}
                 />
 
               ) : (
 
                 <div className="h-96 flex items-center justify-center text-gray-500 bg-gray-950">
-
                   Analyze your resume first to view the optimized version.
-
                 </div>
 
               )}
@@ -729,7 +657,6 @@ export default function DashboardPage() {
   );
 }
 
-
 /* ===================================================== */
 /* UPLOAD CARD */
 /* ===================================================== */
@@ -741,7 +668,6 @@ const UploadCard = ({
   title: string;
   children: React.ReactNode;
 }) => (
-
   <div className="backdrop-blur-xl rounded-3xl p-6 border border-gray-700/30 hover:border-indigo-500/30 transition-all duration-500 shadow-xl hover:shadow-indigo-500/20">
 
     <h3 className="text-lg font-semibold mb-4 text-gray-200">
@@ -754,7 +680,6 @@ const UploadCard = ({
 
   </div>
 );
-
 
 /* ===================================================== */
 /* ACTION BUTTON */
@@ -771,7 +696,6 @@ const ActionButton = ({
   onClick?: () => void;
   disabled?: boolean;
 }) => (
-
   <button
     onClick={onClick}
     disabled={disabled}
@@ -789,7 +713,6 @@ const ActionButton = ({
   </button>
 );
 
-
 /* ===================================================== */
 /* PREVIEW BUTTON */
 /* ===================================================== */
@@ -805,7 +728,6 @@ const PreviewButton = ({
   disabled?: boolean;
   onClick?: () => void;
 }) => (
-
   <button
     onClick={onClick}
     disabled={disabled}
@@ -823,7 +745,6 @@ const PreviewButton = ({
   </button>
 );
 
-
 /* ===================================================== */
 /* OPTIMIZED RESUME PREVIEW */
 /* ===================================================== */
@@ -833,7 +754,6 @@ const OptimizedResumePreview = ({
 }: {
   resume: any;
 }) => {
-
   const personalInfo =
     resume.personalInfo || {};
 
@@ -849,9 +769,7 @@ const OptimizedResumePreview = ({
   const projects =
     resume.projects || [];
 
-
   return (
-
     <div className="min-h-[850px] text-black p-8 md:p-12 overflow-auto">
 
       {/* Personal Info */}
@@ -862,7 +780,6 @@ const OptimizedResumePreview = ({
           {personalInfo.fullName ||
             "Your Name"}
         </h1>
-
 
         <div className="flex flex-wrap justify-center gap-x-5 gap-y-1 mt-3 text-sm text-gray-700">
 
@@ -900,32 +817,25 @@ const OptimizedResumePreview = ({
 
       </div>
 
-
       {/* Summary */}
 
       {resume.summary && (
-
         <ResumePreviewSection title="SUMMARY">
-
           <p className="text-sm leading-6 text-gray-800">
             {resume.summary}
           </p>
-
         </ResumePreviewSection>
-
       )}
-
 
       {/* Experience */}
 
       {experience.length > 0 && (
-
         <ResumePreviewSection title="EXPERIENCE">
 
           {experience.map(
             (
               item: any,
-              index: number
+              index: number,
             ) => (
 
               <div
@@ -936,7 +846,6 @@ const OptimizedResumePreview = ({
                 <div className="flex flex-col md:flex-row md:justify-between gap-1">
 
                   <div>
-
                     <h3 className="font-bold text-base">
                       {item.role}
                     </h3>
@@ -944,7 +853,6 @@ const OptimizedResumePreview = ({
                     <p className="italic text-gray-700">
                       {item.company}
                     </p>
-
                   </div>
 
                   <div className="text-sm text-gray-600 md:text-right">
@@ -964,46 +872,40 @@ const OptimizedResumePreview = ({
 
                 </div>
 
-
                 <ul className="mt-2 list-disc list-inside space-y-1 text-sm leading-5">
 
                   {item.description?.map(
                     (
                       bullet: string,
-                      bulletIndex: number
+                      bulletIndex: number,
                     ) => (
                       <li
-                        key={
-                          bulletIndex
-                        }
+                        key={bulletIndex}
                       >
                         {bullet}
                       </li>
-                    )
+                    ),
                   )}
 
                 </ul>
 
               </div>
 
-            )
+            ),
           )}
 
         </ResumePreviewSection>
-
       )}
-
 
       {/* Education */}
 
       {education.length > 0 && (
-
         <ResumePreviewSection title="EDUCATION">
 
           {education.map(
             (
               item: any,
-              index: number
+              index: number,
             ) => (
 
               <div
@@ -1050,13 +952,11 @@ const OptimizedResumePreview = ({
 
               </div>
 
-            )
+            ),
           )}
 
         </ResumePreviewSection>
-
       )}
-
 
       {/* Skills */}
 
@@ -1076,7 +976,7 @@ const OptimizedResumePreview = ({
                   Languages:
                 </strong>{" "}
                 {skills.languages.join(
-                  ", "
+                  ", ",
                 )}
               </p>
             )}
@@ -1087,7 +987,7 @@ const OptimizedResumePreview = ({
                   Frameworks:
                 </strong>{" "}
                 {skills.frameworks.join(
-                  ", "
+                  ", ",
                 )}
               </p>
             )}
@@ -1098,7 +998,7 @@ const OptimizedResumePreview = ({
                   Tools:
                 </strong>{" "}
                 {skills.tools.join(
-                  ", "
+                  ", ",
                 )}
               </p>
             )}
@@ -1109,17 +1009,15 @@ const OptimizedResumePreview = ({
 
       ) : null}
 
-
       {/* Projects */}
 
       {projects.length > 0 && (
-
         <ResumePreviewSection title="PROJECTS">
 
           {projects.map(
             (
               project: any,
-              index: number
+              index: number,
             ) => (
 
               <div
@@ -1141,50 +1039,42 @@ const OptimizedResumePreview = ({
 
                 </div>
 
-
                 {project.technologies?.length > 0 && (
-
                   <p className="text-sm italic text-gray-600 mt-1">
                     {project.technologies.join(
-                      ", "
+                      ", ",
                     )}
                   </p>
-
                 )}
-
 
                 <ul className="mt-2 list-disc list-inside space-y-1 text-sm leading-5">
 
                   {project.description?.map(
                     (
                       bullet: string,
-                      bulletIndex: number
+                      bulletIndex: number,
                     ) => (
                       <li
-                        key={
-                          bulletIndex
-                        }
+                        key={bulletIndex}
                       >
                         {bullet}
                       </li>
-                    )
+                    ),
                   )}
 
                 </ul>
 
               </div>
 
-            )
+            ),
           )}
 
         </ResumePreviewSection>
-
       )}
 
     </div>
   );
 };
-
 
 /* ===================================================== */
 /* PREVIEW SECTION */
@@ -1197,7 +1087,6 @@ const ResumePreviewSection = ({
   title: string;
   children: React.ReactNode;
 }) => (
-
   <section className="mb-6">
 
     <h2 className="text-base font-bold border-b-2 border-gray-800 pb-1 mb-3">
