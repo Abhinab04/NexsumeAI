@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Nexsume.ai backend",
   "license": "MIT",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "node --import=tsx --watch src/index.ts",
