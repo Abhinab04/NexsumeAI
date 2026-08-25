@@ -1,7 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import pdf from "pdf-parse/lib/pdf-parse.js";
+import { createRequire } from "node:module";
 import mammoth from "mammoth";
+
+const require = createRequire(import.meta.url);
+
+// pdf-parse v1 internally has a test/debug section in its main entry.
+// Loading the actual parser implementation avoids that issue.
+const pdf = require("pdf-parse/lib/pdf-parse.js");
 
 export async function pdf_Parsing(
   filePath: string,
@@ -10,19 +16,20 @@ export async function pdf_Parsing(
     console.log("========== DOCUMENT PARSER ==========");
     console.log("File path:", filePath);
 
-    // Check file exists
+    // -------------------------------------------------
+    // Check file
+    // -------------------------------------------------
+
     if (!fs.existsSync(filePath)) {
       throw new Error(`File not found: ${filePath}`);
     }
 
-    // Read file
     const dataBuffer = fs.readFileSync(filePath);
 
     if (dataBuffer.length === 0) {
       throw new Error("Uploaded file is empty");
     }
 
-    // Get extension
     const extension = path
       .extname(filePath)
       .toLowerCase();
@@ -30,9 +37,9 @@ export async function pdf_Parsing(
     console.log("File extension:", extension);
     console.log("File size:", dataBuffer.length);
 
-    // =====================================================
+    // -------------------------------------------------
     // PDF
-    // =====================================================
+    // -------------------------------------------------
 
     if (extension === ".pdf") {
       console.log("Parsing as PDF...");
@@ -49,9 +56,9 @@ export async function pdf_Parsing(
       return data.text || "";
     }
 
-    // =====================================================
+    // -------------------------------------------------
     // DOCX
-    // =====================================================
+    // -------------------------------------------------
 
     if (extension === ".docx") {
       console.log("Parsing as DOCX...");
@@ -77,9 +84,9 @@ export async function pdf_Parsing(
       return result.value || "";
     }
 
-    // =====================================================
-    // Unsupported format
-    // =====================================================
+    // -------------------------------------------------
+    // Unsupported file
+    // -------------------------------------------------
 
     throw new Error(
       `Unsupported file format: ${extension}. Please upload a PDF or DOCX file.`,
