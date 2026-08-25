@@ -1,4 +1,4 @@
-import { IUser } from "@/api/user/userModel";
+import type { IUser } from "../api/user/userModel.js";
 
 declare global {
   namespace Express {
@@ -7,3 +7,5 @@ declare global {
     }
   }
 }
+
+export {};
