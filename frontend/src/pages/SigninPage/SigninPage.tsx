@@ -4,15 +4,19 @@ import { Home } from "lucide-react";
 
 export default function SigninPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="flex flex-col items-center space-y-6 p-6 rounded-2xl shadow-lg">
-        <SignIn routing="path" path="/signin" fallbackRedirectUrl="/dashboard" />
-        
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="flex flex-col items-center space-y-6 rounded-2xl p-6 shadow-lg">
+        <SignIn
+          routing="path"
+          path="/signin"
+          forceRedirectUrl="/dashboard"
+        />
+
         <Link
           to="/"
           className="flex items-center gap-2 px-6 py-2 text-sm font-semibold"
         >
-          <Home className="w-4 h-4" />
+          <Home className="h-4 w-4" />
           Go Home
         </Link>
       </div>
