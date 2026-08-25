@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { env } from "@/common/utils/env";
-import { logger } from "@/server.js";
+import { env } from "./env.js";
+import { logger } from "../../server.js";
 
 export default async function connectDB() {
   try {
@@ -9,7 +9,7 @@ export default async function connectDB() {
       `✅ MongoDB connected !! DB HOST: ${connectionInstance.connection.host}`,
     );
   } catch (err) {
-    logger.error(`❌ MongoDB Connection Error : ${err}`);
+    logger.error(`❌ MongoDB Connection Error: ${err}`);
     process.exit(1);
   }
 }
