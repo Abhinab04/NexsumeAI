@@ -9,20 +9,20 @@ import path from "node:path";
 import { pino } from "pino";
 import favicon from "serve-favicon";
 
-import { healthCheckRouter } from "./api/healthCheck/healthCheckRouter";
+import { healthCheckRouter } from "./api/healthCheck/healthCheckRouter.js";
 
-import errorHandler from "./common/middleware/errorHandler";
-import rateLimiter from "./common/middleware/rateLimiter";
-import requestLogger from "./common/middleware/requestLogger";
+import errorHandler from "./common/middleware/errorHandler.js";
+import rateLimiter from "./common/middleware/rateLimiter.js";
+import requestLogger from "./common/middleware/requestLogger.js";
 
-import { env } from "./common/utils/env";
+import { env } from "./common/utils/env.js";
 
-import helmetConfig from "./config/helmetConfig";
+import helmetConfig from "./config/helmetConfig.js";
 
-import { authRouter } from "./api/auth/authRouter";
-import { userRouter } from "./api/user/userRouter";
+import { authRouter } from "./api/auth/authRouter.js";
+import { userRouter } from "./api/user/userRouter.js";
 
-import { featureRouter } from "./routes/featuresRouter";
+import { featureRouter } from "./routes/featuresRouter.js";
 
 import { clerkMiddleware } from "@clerk/express";
 
@@ -46,7 +46,7 @@ app.set("view engine", "ejs");
 
 app.set(
   "views",
-  path.join(__dirname, "views")
+  path.join(__dirname, "views"),
 );
 
 // =====================================================
@@ -60,9 +60,9 @@ app.use(
     path.join(
       process.cwd(),
       "public",
-      "favicon.ico"
-    )
-  )
+      "favicon.ico",
+    ),
+  ),
 );
 
 app.use(express.json());
@@ -70,7 +70,7 @@ app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
-  })
+  }),
 );
 
 // =====================================================
@@ -81,7 +81,7 @@ app.use(
   cors({
     origin: env.CORS_ORIGIN,
     credentials: true,
-  })
+  }),
 );
 
 // =====================================================
@@ -116,27 +116,27 @@ app.get(
   "/",
   (_req: Request, res: Response) => {
     return res.render("index");
-  }
+  },
 );
 
 app.use(
   "/health-check",
-  healthCheckRouter
+  healthCheckRouter,
 );
 
 app.use(
   "/auth",
-  authRouter
+  authRouter,
 );
 
 app.use(
   "/user",
-  userRouter
+  userRouter,
 );
 
 app.use(
   "/api/features",
-  featureRouter
+  featureRouter,
 );
 
 // =====================================================
