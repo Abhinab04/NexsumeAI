@@ -11,11 +11,11 @@ async function main(
 
     try {
         console.log("========== GEMINI REQUEST ==========");
-        console.log("Model: gemini-1.5-flash");
+        console.log("Model: gemini-2.5-flash");
         console.log("JSON:", useJson);
 
         const response = await ai.models.generateContent({
-            model: "gemini-1.5-flash",
+            model: "gemini-2.5-flash",
             contents: prompts,
 
             config: {
