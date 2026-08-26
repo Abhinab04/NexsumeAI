@@ -131,7 +131,7 @@ app.use(requestLogger);
 app.get(
   "/",
   (_req: Request, res: Response) => {
-    return res.render("index");
+    return res.status(200).json({ status: "API is running" });
   },
 );
 
