@@ -167,6 +167,7 @@ export default function LandingPage() {
 
         {/* Features Section with Scroll Animation */}
         <motion.section
+          id="features"
           className="z-10 leading-4 ml-28"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -211,6 +212,36 @@ export default function LandingPage() {
         >
           <FeaturesSectionDemo />
         </motion.div>
+        {/* Pricing Section */}
+        <section id="pricing" className="py-20 text-center">
+          <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6">Simple Pricing</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+            Start tailoring your resume for free. Upgrade when you need unlimited access.
+          </p>
+          <div className="bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-3xl p-10 max-w-sm mx-auto shadow-xl">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Pro Plan</h3>
+            <div className="text-5xl font-extrabold text-indigo-600 mb-6">$9<span className="text-lg text-gray-500 font-medium">/mo</span></div>
+            <ul className="text-left space-y-3 mb-8 text-gray-700 dark:text-gray-300">
+              <li>✅ Unlimited Resume Analysis</li>
+              <li>✅ ATS Optimization</li>
+              <li>✅ Export to PDF & DOCX</li>
+              <li>✅ Priority Support</li>
+            </ul>
+            <button className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition">Get Started</button>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="py-20 text-center mb-10">
+          <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6">Get in Touch</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
+            Have questions or need support? We're here to help you land your dream job.
+          </p>
+          <a href="mailto:support@nexsume.ai" className="inline-block px-8 py-4 bg-gray-900 dark:bg-white dark:text-black text-white font-bold rounded-2xl shadow-lg hover:scale-105 transition">
+            Contact Support
+          </a>
+        </section>
+
       </motion.div>
     </BaseLayout>
   );
