@@ -43,6 +43,14 @@ function App() {
           }
         />
 
+        {/* Global SSO callback */}
+        <Route
+          path="/sso-callback"
+          element={
+            <AuthenticateWithRedirectCallback />
+          }
+        />
+
         {/* Clerk sign-up SSO callback */}
         <Route
           path="/signin/create/sso-callback"
