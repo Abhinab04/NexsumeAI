@@ -6,6 +6,9 @@ const unexpectedRequest: RequestHandler = (_req, res) => {
 };
 
 const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
+  console.error("\n========== GLOBAL ERROR HANDLER ==========");
+  console.error(err);
+  console.error("==========================================\n");
   res.locals.err = err;
   next(err);
 };
