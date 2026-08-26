@@ -62,20 +62,12 @@ export default function AppNavbar() {
           )}
 
           {isSignedIn && (
-            <>
-              <NavbarButton
-                variant="primary"
-                onClick={() => navigate("/dashboard")}
-              >
-                Dashboard
-              </NavbarButton>
-              <NavbarButton
-                variant="secondary"
-                onClick={() => navigate("/editor")}
-              >
-                Editor
-              </NavbarButton>
-            </>
+            <NavbarButton
+              variant="primary"
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </NavbarButton>
           )}
         </div>
       </NavBody>
