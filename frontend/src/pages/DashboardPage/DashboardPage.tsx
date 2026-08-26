@@ -117,6 +117,7 @@ export default function DashboardPage() {
             Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
+          timeout: 120000, // 120 second timeout so it doesn't hang forever
         },
       );
 
@@ -213,10 +214,15 @@ export default function DashboardPage() {
         "===================================\n",
       );
 
+      const errorMessage = axios.isAxiosError(error)
+        ? error.response?.data?.message || error.message
+        : error instanceof Error ? error.message : "Unknown error";
+
       toast.error(
-        "Failed to analyze resume",
+        `Failed to analyze resume: ${errorMessage}`,
         {
           id: "analyze",
+          duration: 10000,
         },
       );
     } finally {
