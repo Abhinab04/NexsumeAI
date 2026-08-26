@@ -235,11 +235,58 @@ export default function LandingPage() {
         <section id="contact" className="py-20 text-center mb-10">
           <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-6">Get in Touch</h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
-            Have questions or need support? We're here to help you land your dream job.
+            Have questions or need support? Send us a message and we'll get back to you shortly.
           </p>
-          <a href="mailto:support@nexsume.ai" className="inline-block px-8 py-4 bg-gray-900 dark:bg-white dark:text-black text-white font-bold rounded-2xl shadow-lg hover:scale-105 transition">
-            Contact Support
-          </a>
+
+          <form 
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+              const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value;
+              const btn = form.querySelector('button');
+              if (btn) btn.disabled = true;
+
+              try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/contact`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email, message }),
+                });
+
+                if (!response.ok) throw new Error('Failed to send message');
+                
+                alert('Message sent successfully! We will get back to you soon.');
+                form.reset();
+              } catch (err) {
+                alert('Failed to send message. Please try again later.');
+              } finally {
+                if (btn) btn.disabled = false;
+              }
+            }}
+            className="max-w-md mx-auto flex flex-col gap-4 text-left"
+          >
+            <input 
+              name="email"
+              type="email" 
+              required 
+              placeholder="Your email address" 
+              className="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <textarea 
+              name="message"
+              required 
+              rows={4}
+              placeholder="How can we help you?" 
+              className="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button 
+              type="submit" 
+              className="w-full py-4 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-black font-bold hover:scale-[1.02] transition shadow-lg disabled:opacity-50"
+            >
+              Send Message
+            </button>
+          </form>
         </section>
 
       </motion.div>
