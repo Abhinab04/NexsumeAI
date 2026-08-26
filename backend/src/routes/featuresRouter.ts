@@ -3,6 +3,7 @@ import express, { type Router } from "express";
 import { generateQuestionRouter } from "./generateQuestionRouter.js";
 import { Resume_ScoreRouter } from "./resume_Score.js";
 import { pdfGeneratorRouter } from "./pdfGenerator.js";
+import { contactRouter } from "./contactRouter.js";
 
 export const featureRouter: Router = express.Router();
 
@@ -19,4 +20,9 @@ featureRouter.use(
 featureRouter.use(
   "/resume",
   pdfGeneratorRouter,
+);
+
+featureRouter.use(
+  "/",
+  contactRouter,
 );
