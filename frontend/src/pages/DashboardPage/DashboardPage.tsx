@@ -231,7 +231,21 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen p-6 md:p-10 text-white bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <div className="min-h-screen p-6 md:p-10 text-white bg-gradient-to-br from-gray-900 via-black to-gray-900 relative">
+
+      {/* ================================================= */}
+      {/* LOADING OVERLAY */}
+      {/* ================================================= */}
+
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+          <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            Analyzing your resume...
+          </h2>
+          <p className="text-gray-400 mt-2">This may take up to a minute</p>
+        </div>
+      )}
 
       {/* ================================================= */}
       {/* HEADER */}
