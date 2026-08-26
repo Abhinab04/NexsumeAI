@@ -101,6 +101,16 @@ app.use(
 );
 
 // =====================================================
+// DEBUG
+// =====================================================
+
+app.get("/api/debug", (req: Request, res: Response) => {
+    console.log("========== DEBUG ENDPOINT HIT ==========");
+    console.log("Origin:", req.headers.origin);
+    res.json({ success: true, message: "Backend is reachable!" });
+});
+
+// =====================================================
 // Clerk
 // =====================================================
 
