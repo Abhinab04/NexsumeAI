@@ -24,6 +24,7 @@ const envSchema = z.object({
   REFRESH_TOKEN_SECRET: z.string(),
   REFRESH_TOKEN_EXPIRY: z.string().default("10d"),
   SESSION_SECRET: z.string(),
+  GEMINI_API_KEY: z.string().default(""),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
