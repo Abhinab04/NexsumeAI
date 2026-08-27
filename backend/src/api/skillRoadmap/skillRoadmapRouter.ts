@@ -1,0 +1,13 @@
+import express, { type Router } from "express";
+import { requireAuth } from "@clerk/express";
+import { skillRoadmapController } from "./skillRoadmapController";
+
+export const skillRoadmapRouter: Router = express.Router();
+
+skillRoadmapRouter.use(requireAuth());
+
+skillRoadmapRouter.post("/generate", skillRoadmapController.generate);
+skillRoadmapRouter.get("/", skillRoadmapController.getRoadmaps);
+skillRoadmapRouter.get("/:id", skillRoadmapController.getRoadmapById);
+skillRoadmapRouter.put("/:id/status", skillRoadmapController.updateSkillStatus);
+skillRoadmapRouter.delete("/:id", skillRoadmapController.deleteRoadmap);
