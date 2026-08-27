@@ -1,6 +1,6 @@
 import express, { type Router } from "express";
 import { requireAuth } from "@clerk/express";
-import { resumeVersionController } from "./resumeVersionController";
+import { resumeVersionController } from "./resumeVersionController.js";
 
 export const resumeVersionRouter: Router = express.Router();
 

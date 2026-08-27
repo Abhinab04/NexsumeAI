@@ -1,4 +1,4 @@
-import { IInterviewSession, IInterviewQuestion, InterviewSessionModel, InterviewQuestionModel } from "./mockInterviewModel";
+import { IInterviewSession, IInterviewQuestion, InterviewSessionModel, InterviewQuestionModel } from "./mockInterviewModel.js";
 
 export class MockInterviewRepository {
   async createSession(data: Partial<IInterviewSession>): Promise<IInterviewSession> {

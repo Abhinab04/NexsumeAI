@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { ServiceResponse } from "@/common/models/serviceResponse";
-import { CoverLetterRepository } from "./coverLetterRepository";
-import { ICoverLetter } from "./coverLetterModel";
+import { ServiceResponse } from "../../common/models/serviceResponse.js";
+import { CoverLetterRepository, coverLetterRepository } from "./coverLetterRepository.js";
+import { ICoverLetter } from "./coverLetterModel.js";
 import { GoogleGenAI } from "@google/genai";
-import { env } from "@/common/utils/env";
+import { env } from "../../common/utils/env.js";
 
 export class CoverLetterService {
   private coverLetterRepository: CoverLetterRepository;
@@ -113,4 +113,4 @@ Output ONLY the text of the cover letter, nothing else. Make it professional and
   }
 }
 
-export const coverLetterService = new CoverLetterService(require("./coverLetterRepository").coverLetterRepository);
+export const coverLetterService = new CoverLetterService(coverLetterRepository);

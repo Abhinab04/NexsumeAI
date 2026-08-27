@@ -1,6 +1,6 @@
 import express, { type Router } from "express";
 import { requireAuth } from "@clerk/express";
-import { coverLetterController } from "./coverLetterController";
+import { coverLetterController } from "./coverLetterController.js";
 
 export const coverLetterRouter: Router = express.Router();
 

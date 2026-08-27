@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
-import { handleServiceResponse } from "@/common/utils/httpHandlers";
-import { coverLetterService } from "./coverLetterService";
+import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
+import { coverLetterService } from "./coverLetterService.js";
 
 class CoverLetterController {
   public generate: RequestHandler = async (req: Request, res: Response) => {

@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { ServiceResponse } from "@/common/models/serviceResponse";
-import { SkillRoadmapRepository } from "./skillRoadmapRepository";
-import { ISkillRoadmap } from "./skillRoadmapModel";
+import { ServiceResponse } from "../../common/models/serviceResponse.js";
+import { SkillRoadmapRepository, skillRoadmapRepository } from "./skillRoadmapRepository.js";
+import { ISkillRoadmap } from "./skillRoadmapModel.js";
 import { GoogleGenAI } from "@google/genai";
-import { env } from "@/common/utils/env";
+import { env } from "../../common/utils/env.js";
 
 export class SkillRoadmapService {
   private repository: SkillRoadmapRepository;
@@ -114,4 +114,4 @@ JD: ${data.jobDescription}
   }
 }
 
-export const skillRoadmapService = new SkillRoadmapService(require("./skillRoadmapRepository").skillRoadmapRepository);
+export const skillRoadmapService = new SkillRoadmapService(skillRoadmapRepository);

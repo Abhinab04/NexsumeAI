@@ -1,4 +1,4 @@
-import { IJobApplication, JobApplicationModel } from "./jobTrackerModel";
+import { IJobApplication, JobApplicationModel } from "./jobTrackerModel.js";
 
 export class JobTrackerRepository {
   async findAllByUserId(userId: string): Promise<IJobApplication[]> {

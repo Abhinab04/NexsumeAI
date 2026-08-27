@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
-import { handleServiceResponse } from "@/common/utils/httpHandlers";
-import { skillRoadmapService } from "./skillRoadmapService";
+import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
+import { skillRoadmapService } from "./skillRoadmapService.js";
 
 class SkillRoadmapController {
   public generate: RequestHandler = async (req: Request, res: Response) => {

@@ -1,4 +1,4 @@
-import { ISkillRoadmap, SkillRoadmapModel } from "./skillRoadmapModel";
+import { ISkillRoadmap, SkillRoadmapModel } from "./skillRoadmapModel.js";
 
 export class SkillRoadmapRepository {
   async create(data: Partial<ISkillRoadmap>): Promise<ISkillRoadmap> {

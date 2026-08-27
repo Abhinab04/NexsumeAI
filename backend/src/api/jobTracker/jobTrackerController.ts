@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
-import { handleServiceResponse } from "@/common/utils/httpHandlers";
-import { jobTrackerService } from "./jobTrackerService";
+import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
+import { jobTrackerService } from "./jobTrackerService.js";
 
 class JobTrackerController {
   public getJobApplications: RequestHandler = async (req: Request, res: Response) => {

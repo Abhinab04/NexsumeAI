@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
-import { handleServiceResponse } from "@/common/utils/httpHandlers";
-import { resumeVersionService } from "./resumeVersionService";
+import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
+import { resumeVersionService } from "./resumeVersionService.js";
 
 class ResumeVersionController {
   public getResumeVersions: RequestHandler = async (req: Request, res: Response) => {

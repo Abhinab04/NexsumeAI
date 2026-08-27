@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { ServiceResponse } from "@/common/models/serviceResponse";
-import { MockInterviewRepository } from "./mockInterviewRepository";
-import { IInterviewSession, IInterviewQuestion } from "./mockInterviewModel";
+import { ServiceResponse } from "../../common/models/serviceResponse.js";
+import { MockInterviewRepository, mockInterviewRepository } from "./mockInterviewRepository.js";
+import { IInterviewSession, IInterviewQuestion } from "./mockInterviewModel.js";
 import { GoogleGenAI } from "@google/genai";
-import { env } from "@/common/utils/env";
+import { env } from "../../common/utils/env.js";
 
 export class MockInterviewService {
   private repository: MockInterviewRepository;
@@ -204,4 +204,4 @@ Return ONLY a valid JSON object (no markdown tags like \`\`\`json) with the foll
   }
 }
 
-export const mockInterviewService = new MockInterviewService(require("./mockInterviewRepository").mockInterviewRepository);
+export const mockInterviewService = new MockInterviewService(mockInterviewRepository);

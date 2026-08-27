@@ -1,4 +1,4 @@
-import { IResumeVersion, ResumeVersionModel } from "./resumeVersionModel";
+import { IResumeVersion, ResumeVersionModel } from "./resumeVersionModel.js";
 
 export class ResumeVersionRepository {
   async findAllByUserId(userId: string): Promise<IResumeVersion[]> {

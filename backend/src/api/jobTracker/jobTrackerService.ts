@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import { ServiceResponse } from "@/common/models/serviceResponse";
-import { JobTrackerRepository } from "./jobTrackerRepository";
-import { IJobApplication } from "./jobTrackerModel";
+import { ServiceResponse } from "../../common/models/serviceResponse.js";
+import { JobTrackerRepository, jobTrackerRepository } from "./jobTrackerRepository.js";
+import { IJobApplication } from "./jobTrackerModel.js";
 
 export class JobTrackerService {
   private jobTrackerRepository: JobTrackerRepository;
@@ -65,4 +65,4 @@ export class JobTrackerService {
   }
 }
 
-export const jobTrackerService = new JobTrackerService(require("./jobTrackerRepository").jobTrackerRepository);
+export const jobTrackerService = new JobTrackerService(jobTrackerRepository);

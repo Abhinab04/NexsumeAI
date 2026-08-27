@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
-import { handleServiceResponse } from "@/common/utils/httpHandlers";
-import { mockInterviewService } from "./mockInterviewService";
+import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
+import { mockInterviewService } from "./mockInterviewService.js";
 
 class MockInterviewController {
   public startSession: RequestHandler = async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import { ServiceResponse } from "@/common/models/serviceResponse";
-import { ResumeVersionRepository } from "./resumeVersionRepository";
-import { IResumeVersion } from "./resumeVersionModel";
+import { ServiceResponse } from "../../common/models/serviceResponse.js";
+import { ResumeVersionRepository, resumeVersionRepository } from "./resumeVersionRepository.js";
+import { IResumeVersion } from "./resumeVersionModel.js";
 
 export class ResumeVersionService {
   private resumeVersionRepository: ResumeVersionRepository;
@@ -70,4 +70,4 @@ export class ResumeVersionService {
   }
 }
 
-export const resumeVersionService = new ResumeVersionService(require("./resumeVersionRepository").resumeVersionRepository);
+export const resumeVersionService = new ResumeVersionService(resumeVersionRepository);

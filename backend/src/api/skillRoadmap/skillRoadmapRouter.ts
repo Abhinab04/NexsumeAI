@@ -1,6 +1,6 @@
 import express, { type Router } from "express";
 import { requireAuth } from "@clerk/express";
-import { skillRoadmapController } from "./skillRoadmapController";
+import { skillRoadmapController } from "./skillRoadmapController.js";
 
 export const skillRoadmapRouter: Router = express.Router();
 

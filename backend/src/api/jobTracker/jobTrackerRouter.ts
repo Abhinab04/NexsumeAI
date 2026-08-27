@@ -1,6 +1,6 @@
 import express, { type Router } from "express";
 import { requireAuth } from "@clerk/express";
-import { jobTrackerController } from "./jobTrackerController";
+import { jobTrackerController } from "./jobTrackerController.js";
 
 export const jobTrackerRouter: Router = express.Router();
 

@@ -1,4 +1,4 @@
-import { ICoverLetter, CoverLetterModel } from "./coverLetterModel";
+import { ICoverLetter, CoverLetterModel } from "./coverLetterModel.js";
 
 export class CoverLetterRepository {
   async findAllByUserId(userId: string): Promise<ICoverLetter[]> {
