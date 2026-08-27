@@ -17,7 +17,6 @@ interface ResumeVersion {
 
 export default function ResumeHistoryPage() {
   const { getToken } = useAuth();
-  const navigate = useNavigate();
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
   const [loading, setLoading] = useState(true);
 
