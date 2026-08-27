@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@clerk/clerk-react";
 import { IconTrash, IconPencil, IconRestore, IconScale } from "@tabler/icons-react";
 import { motion } from "motion/react";
 
@@ -15,6 +16,8 @@ interface ResumeVersion {
 }
 
 export default function ResumeHistoryPage() {
+  const { getToken } = useAuth();
+  const navigate = useNavigate();
   const [versions, setVersions] = useState<ResumeVersion[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +36,10 @@ export default function ResumeHistoryPage() {
   const fetchVersions = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/resume-versions");
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/resume-versions`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -52,7 +58,11 @@ export default function ResumeHistoryPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this version?")) return;
     try {
-      const res = await fetch(`/api/resume-versions/${id}`, { method: "DELETE" });
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/resume-versions/${id}`, { 
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (res.ok) {
         toast.success("Version deleted");
         fetchVersions();
@@ -67,9 +77,13 @@ export default function ResumeHistoryPage() {
   const handleRename = async (id: string) => {
     if (!editName.trim()) return;
     try {
-      const res = await fetch(`/api/resume-versions/${id}`, {
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/resume-versions/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
         body: JSON.stringify({ versionName: editName }),
       });
       if (res.ok) {
@@ -87,7 +101,11 @@ export default function ResumeHistoryPage() {
   const handleRestore = async (id: string) => {
     if (!confirm("This will load the version into the editor. Proceed?")) return;
     try {
-      const res = await fetch(`/api/resume-versions/${id}/restore`, { method: "POST" });
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/resume-versions/${id}/restore`, { 
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (res.ok) {
         toast.success("Restored! Head to the editor to view.");
         // We could redirect to /editor with the restored content or save it to local storage.

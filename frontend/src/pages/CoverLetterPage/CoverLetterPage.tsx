@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@clerk/clerk-react";
 import { IconWand, IconCopy, IconDownload, IconHistory } from "@tabler/icons-react";
 
 interface CoverLetter {
@@ -13,6 +14,7 @@ interface CoverLetter {
 }
 
 export default function CoverLetterPage() {
+  const { getToken } = useAuth();
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
@@ -33,7 +35,10 @@ export default function CoverLetterPage() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch("/api/features/cover-letter");
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/cover-letter`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -53,9 +58,13 @@ export default function CoverLetterPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/features/cover-letter/generate", {
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/cover-letter/generate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           jobTitle,
           companyName,

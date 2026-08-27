@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@clerk/clerk-react";
 import { IconPlus, IconTrash, IconPencil } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -24,6 +25,7 @@ const STATUSES = [
 ];
 
 export default function JobTrackerPage() {
+  const { getToken } = useAuth();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
@@ -43,7 +45,10 @@ export default function JobTrackerPage() {
 
   const fetchApplications = async () => {
     try {
-      const res = await fetch("/api/job-tracker");
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/job-tracker`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.success) {
@@ -63,11 +68,15 @@ export default function JobTrackerPage() {
 
     try {
       const method = editingId ? "PUT" : "POST";
-      const url = editingId ? `/api/job-tracker/${editingId}` : "/api/job-tracker";
+      const url = editingId ? `${import.meta.env.VITE_BACKEND_URL}/api/job-tracker/${editingId}` : `${import.meta.env.VITE_BACKEND_URL}/api/job-tracker`;
       
+      const token = await getToken();
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(formState),
       });
 
@@ -88,7 +97,11 @@ export default function JobTrackerPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this application?")) return;
     try {
-      const res = await fetch(`/api/job-tracker/${id}`, { method: "DELETE" });
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/job-tracker/${id}`, { 
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (res.ok) {
         toast.success("Application deleted");
         fetchApplications();
@@ -111,9 +124,13 @@ export default function JobTrackerPage() {
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
-      const res = await fetch(`/api/job-tracker/${id}`, {
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/job-tracker/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
         body: JSON.stringify({ status: newStatus }),
       });
       if (res.ok) {

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@clerk/clerk-react";
 import { IconMicrophone, IconPlayerPlay, IconCheck, IconHistory, IconArrowRight } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function MockInterviewPage() {
+  const { getToken } = useAuth();
   const [step, setStep] = useState<"setup" | "interview" | "results" | "history">("setup");
   
   // Setup state
@@ -33,9 +35,13 @@ export default function MockInterviewPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/features/mock-interview/start", {
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/mock-interview/start`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
         body: JSON.stringify({ resumeContent, jobDescription, targetRole, interviewType, difficulty }),
       });
       const data = await res.json();
@@ -58,7 +64,10 @@ export default function MockInterviewPage() {
     setEvaluation(null);
     setAnswer("");
     try {
-      const res = await fetch(`/api/features/mock-interview/${sid}/next-question`);
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/mock-interview/${sid}/next-question`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         setCurrentQuestion(data.responseObject);
@@ -74,9 +83,13 @@ export default function MockInterviewPage() {
     if (!answer.trim() || !sessionId || !currentQuestion) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/features/mock-interview/${sessionId}/answer`, {
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/mock-interview/${sessionId}/answer`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
         body: JSON.stringify({ questionId: currentQuestion._id, answer }),
       });
       const data = await res.json();
@@ -94,7 +107,11 @@ export default function MockInterviewPage() {
     if (!sessionId) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/features/mock-interview/${sessionId}/complete`, { method: "POST" });
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/mock-interview/${sessionId}/complete`, { 
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         loadResults(sessionId);
@@ -108,7 +125,10 @@ export default function MockInterviewPage() {
 
   const loadResults = async (sid: string) => {
     try {
-      const res = await fetch(`/api/features/mock-interview/${sid}/result`);
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/mock-interview/${sid}/result`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         setSessionResults(data.responseObject);
@@ -122,7 +142,10 @@ export default function MockInterviewPage() {
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/features/mock-interview/history");
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/mock-interview/history`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         setHistory(data.responseObject);

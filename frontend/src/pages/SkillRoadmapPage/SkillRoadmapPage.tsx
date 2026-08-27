@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@clerk/clerk-react";
 import { IconMap, IconTrophy, IconHistory } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function SkillRoadmapPage() {
+  const { getToken } = useAuth();
   const [step, setStep] = useState<"setup" | "view" | "history">("setup");
   const [loading, setLoading] = useState(false);
 
@@ -21,9 +23,13 @@ export default function SkillRoadmapPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/features/skill-roadmap/generate", {
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/skill-roadmap/generate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
         body: JSON.stringify({ resumeContent, jobDescription, targetRole }),
       });
       const data = await res.json();
@@ -43,7 +49,10 @@ export default function SkillRoadmapPage() {
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/features/skill-roadmap");
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/skill-roadmap`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         setHistory(data.responseObject);
@@ -59,9 +68,13 @@ export default function SkillRoadmapPage() {
   const updateSkillStatus = async (phaseIndex: number, skillIndex: number, status: string) => {
     if (!roadmap) return;
     try {
-      const res = await fetch(`/api/features/skill-roadmap/${roadmap._id}/status`, {
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/features/skill-roadmap/${roadmap._id}/status`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ phaseIndex, skillIndex, status }),
       });
       if (res.ok) {
