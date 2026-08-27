@@ -24,6 +24,8 @@ import { authRouter } from "./api/auth/authRouter.js";
 import { userRouter } from "./api/user/userRouter.js";
 
 import { featureRouter } from "./routes/featuresRouter.js";
+import { resumeVersionRouter } from "./api/resumeVersion/resumeVersionRouter.js";
+import { jobTrackerRouter } from "./api/jobTracker/jobTrackerRouter.js";
 
 import { clerkMiddleware } from "@clerk/express";
 
@@ -163,6 +165,16 @@ app.use(
 app.use(
   "/api/features",
   featureRouter,
+);
+
+app.use(
+  "/api/resume-versions",
+  resumeVersionRouter,
+);
+
+app.use(
+  "/api/job-tracker",
+  jobTrackerRouter,
 );
 
 // =====================================================
