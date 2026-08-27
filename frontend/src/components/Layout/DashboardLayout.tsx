@@ -3,6 +3,11 @@ import {
   IconArrowLeft,
   IconBrandTabler,
   IconFileText,
+  IconHistory,
+  IconMail,
+  IconBriefcase,
+  IconMicrophone,
+  IconMap,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import {
@@ -57,6 +62,51 @@ export function DashboardLayout() {
       href: "/editor",
       icon: (
         <IconFileText
+          className="h-5 w-5 shrink-0 text-neutral-400"
+        />
+      ),
+    },
+    {
+      label: "Resume History",
+      href: "/resume-history",
+      icon: (
+        <IconHistory
+          className="h-5 w-5 shrink-0 text-neutral-400"
+        />
+      ),
+    },
+    {
+      label: "Cover Letter",
+      href: "/cover-letter",
+      icon: (
+        <IconMail
+          className="h-5 w-5 shrink-0 text-neutral-400"
+        />
+      ),
+    },
+    {
+      label: "Job Tracker",
+      href: "/job-tracker",
+      icon: (
+        <IconBriefcase
+          className="h-5 w-5 shrink-0 text-neutral-400"
+        />
+      ),
+    },
+    {
+      label: "Mock Interview",
+      href: "/mock-interview",
+      icon: (
+        <IconMicrophone
+          className="h-5 w-5 shrink-0 text-neutral-400"
+        />
+      ),
+    },
+    {
+      label: "Skill Roadmap",
+      href: "/skill-roadmap",
+      icon: (
+        <IconMap
           className="h-5 w-5 shrink-0 text-neutral-400"
         />
       ),
