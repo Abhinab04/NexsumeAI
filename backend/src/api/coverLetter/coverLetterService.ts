@@ -42,7 +42,7 @@ Output ONLY the text of the cover letter, nothing else. Make it professional and
 `;
 
       const response = await this.ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
       });
 

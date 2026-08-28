@@ -49,7 +49,7 @@ It should be ONE concise question.
 Do not provide any preamble, just output the question text.
 `;
       const response = await this.ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
       });
 
@@ -97,7 +97,7 @@ Evaluate the answer and return ONLY a valid JSON object (no markdown tags, no ma
 `;
 
       const response = await this.ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
       });
 
@@ -155,7 +155,7 @@ Return ONLY a valid JSON object (no markdown tags like \`\`\`json) with the foll
 }
 `;
       const response = await this.ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
       });
 
