@@ -4,13 +4,17 @@ import { skillRoadmapService } from "./skillRoadmapService.js";
 
 class SkillRoadmapController {
   public generate: RequestHandler = async (req: Request, res: Response) => {
+    console.log("[SkillRoadmapController] generate called");
     const userId = (req as any).auth?.userId;
+    console.log("[SkillRoadmapController] userId:", userId);
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const serviceResponse = await skillRoadmapService.generateRoadmap(userId, req.body);
+    console.log("[SkillRoadmapController] generate response status:", serviceResponse.statusCode);
     return handleServiceResponse(serviceResponse, res);
   };
 
   public getRoadmaps: RequestHandler = async (req: Request, res: Response) => {
+    console.log("[SkillRoadmapController] getRoadmaps called");
     const userId = (req as any).auth?.userId;
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const serviceResponse = await skillRoadmapService.getRoadmaps(userId);
@@ -18,6 +22,7 @@ class SkillRoadmapController {
   };
 
   public getRoadmapById: RequestHandler = async (req: Request, res: Response) => {
+    console.log("[SkillRoadmapController] getRoadmapById called with id:", req.params.id);
     const userId = (req as any).auth?.userId;
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const { id } = req.params;

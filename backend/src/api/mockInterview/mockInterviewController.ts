@@ -4,7 +4,9 @@ import { mockInterviewService } from "./mockInterviewService.js";
 
 class MockInterviewController {
   public startSession: RequestHandler = async (req: Request, res: Response) => {
+    console.log("[MockInterviewController] startSession called");
     const userId = (req as any).auth?.userId;
+    console.log("[MockInterviewController] userId:", userId);
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const serviceResponse = await mockInterviewService.startSession(userId, req.body);
     return handleServiceResponse(serviceResponse, res);
@@ -36,6 +38,7 @@ class MockInterviewController {
   };
 
   public getHistory: RequestHandler = async (req: Request, res: Response) => {
+    console.log("[MockInterviewController] getHistory called");
     const userId = (req as any).auth?.userId;
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const serviceResponse = await mockInterviewService.getSessionHistory(userId);

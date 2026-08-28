@@ -4,7 +4,9 @@ import { coverLetterService } from "./coverLetterService.js";
 
 class CoverLetterController {
   public generate: RequestHandler = async (req: Request, res: Response) => {
+    console.log("[CoverLetterController] generate called");
     const userId = (req as any).auth?.userId;
+    console.log("[CoverLetterController] userId:", userId);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -20,6 +22,7 @@ class CoverLetterController {
   };
 
   public getCoverLetters: RequestHandler = async (req: Request, res: Response) => {
+    console.log("[CoverLetterController] getCoverLetters called");
     const userId = (req as any).auth?.userId;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
