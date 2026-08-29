@@ -1,5 +1,5 @@
 import express, { type Router } from "express";
-import { requireAuth } from "@clerk/express";
+import { requireAuth } from "../../common/middleware/requireAuth.js";
 import { mockInterviewController } from "./mockInterviewController.js";
 
 export const mockInterviewRouter: Router = express.Router();

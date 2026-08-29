@@ -1,5 +1,5 @@
 import express, { type Router } from "express";
-import { requireAuth } from "@clerk/express";
+import { requireAuth } from "../../common/middleware/requireAuth.js";
 import { coverLetterController } from "./coverLetterController.js";
 
 export const coverLetterRouter: Router = express.Router();
