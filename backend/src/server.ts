@@ -26,7 +26,6 @@ import { userRouter } from "./api/user/userRouter.js";
 import { featureRouter } from "./routes/featuresRouter.js";
 import { resumeVersionRouter } from "./api/resumeVersion/resumeVersionRouter.js";
 import { jobTrackerRouter } from "./api/jobTracker/jobTrackerRouter.js";
-
 import { clerkMiddleware } from "@clerk/express";
 
 // =====================================================
@@ -116,7 +115,10 @@ app.get("/api/debug", (req: Request, res: Response) => {
 // Clerk
 // =====================================================
 
-app.use(clerkMiddleware());
+app.use(clerkMiddleware({
+  secretKey: process.env.CLERK_SECRET_KEY,
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY
+}));
 
 // =====================================================
 // Security
