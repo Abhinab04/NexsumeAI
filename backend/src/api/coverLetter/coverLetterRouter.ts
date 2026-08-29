@@ -4,7 +4,7 @@ import { coverLetterController } from "./coverLetterController.js";
 
 export const coverLetterRouter: Router = express.Router();
 
-coverLetterRouter.use(requireAuth());
+coverLetterRouter.use(requireAuth);
 
 coverLetterRouter.post("/generate", coverLetterController.generate);
 coverLetterRouter.get("/", coverLetterController.getCoverLetters);

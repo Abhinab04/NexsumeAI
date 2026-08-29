@@ -4,7 +4,7 @@ import { skillRoadmapController } from "./skillRoadmapController.js";
 
 export const skillRoadmapRouter: Router = express.Router();
 
-skillRoadmapRouter.use(requireAuth());
+skillRoadmapRouter.use(requireAuth);
 
 skillRoadmapRouter.post("/generate", skillRoadmapController.generate);
 skillRoadmapRouter.get("/", skillRoadmapController.getRoadmaps);

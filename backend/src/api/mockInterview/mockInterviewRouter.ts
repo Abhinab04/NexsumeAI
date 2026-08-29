@@ -4,7 +4,7 @@ import { mockInterviewController } from "./mockInterviewController.js";
 
 export const mockInterviewRouter: Router = express.Router();
 
-mockInterviewRouter.use(requireAuth());
+mockInterviewRouter.use(requireAuth);
 
 mockInterviewRouter.post("/start", mockInterviewController.startSession);
 mockInterviewRouter.get("/history", mockInterviewController.getHistory);

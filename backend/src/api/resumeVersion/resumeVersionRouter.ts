@@ -4,7 +4,7 @@ import { resumeVersionController } from "./resumeVersionController.js";
 
 export const resumeVersionRouter: Router = express.Router();
 
-resumeVersionRouter.use(requireAuth());
+resumeVersionRouter.use(requireAuth);
 
 resumeVersionRouter.get("/", resumeVersionController.getResumeVersions);
 resumeVersionRouter.post("/", resumeVersionController.createResumeVersion);

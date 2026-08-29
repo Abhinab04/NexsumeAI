@@ -4,7 +4,7 @@ import { jobTrackerController } from "./jobTrackerController.js";
 
 export const jobTrackerRouter: Router = express.Router();
 
-jobTrackerRouter.use(requireAuth());
+jobTrackerRouter.use(requireAuth);
 
 jobTrackerRouter.get("/", jobTrackerController.getJobApplications);
 jobTrackerRouter.post("/", jobTrackerController.createJobApplication);
