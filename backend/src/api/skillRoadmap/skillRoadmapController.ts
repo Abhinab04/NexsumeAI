@@ -1,11 +1,12 @@
 import { Request, RequestHandler, Response } from "express";
+import { getAuth } from "@clerk/express";
 import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
 import { skillRoadmapService } from "./skillRoadmapService.js";
 
 class SkillRoadmapController {
   public generate: RequestHandler = async (req: Request, res: Response) => {
     console.log("[SkillRoadmapController] generate called");
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     console.log("[SkillRoadmapController] userId:", userId);
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const serviceResponse = await skillRoadmapService.generateRoadmap(userId, req.body);
@@ -15,7 +16,7 @@ class SkillRoadmapController {
 
   public getRoadmaps: RequestHandler = async (req: Request, res: Response) => {
     console.log("[SkillRoadmapController] getRoadmaps called");
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const serviceResponse = await skillRoadmapService.getRoadmaps(userId);
     return handleServiceResponse(serviceResponse, res);
@@ -23,7 +24,7 @@ class SkillRoadmapController {
 
   public getRoadmapById: RequestHandler = async (req: Request, res: Response) => {
     console.log("[SkillRoadmapController] getRoadmapById called with id:", req.params.id);
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const { id } = req.params;
     const serviceResponse = await skillRoadmapService.getRoadmapById(id, userId);
@@ -31,7 +32,7 @@ class SkillRoadmapController {
   };
 
   public updateSkillStatus: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const { id } = req.params;
     const { phaseIndex, skillIndex, status } = req.body;
@@ -40,7 +41,7 @@ class SkillRoadmapController {
   };
 
   public deleteRoadmap: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     const { id } = req.params;
     const serviceResponse = await skillRoadmapService.deleteRoadmap(id, userId);
