@@ -26,7 +26,6 @@ const STATUSES = [
 
 export default function JobTrackerPage() {
   const { getToken } = useAuth();
-  console.log(getToken);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
@@ -47,6 +46,7 @@ export default function JobTrackerPage() {
   const fetchApplications = async () => {
     try {
       const token = await getToken();
+      console.log(token)
       const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/job-tracker`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
