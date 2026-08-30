@@ -1,10 +1,11 @@
 import { Request, RequestHandler, Response } from "express";
+import { getAuth } from "@clerk/express";
 import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
 import { resumeVersionService } from "./resumeVersionService.js";
 
 class ResumeVersionController {
   public getResumeVersions: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -13,7 +14,7 @@ class ResumeVersionController {
   };
 
   public getResumeVersion: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -23,7 +24,7 @@ class ResumeVersionController {
   };
 
   public createResumeVersion: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -33,7 +34,7 @@ class ResumeVersionController {
   };
 
   public updateResumeVersion: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -44,7 +45,7 @@ class ResumeVersionController {
   };
 
   public deleteResumeVersion: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -54,7 +55,7 @@ class ResumeVersionController {
   };
 
   public restoreResumeVersion: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
