@@ -1,11 +1,12 @@
 import { Request, RequestHandler, Response } from "express";
+import { getAuth } from "@clerk/express";
 import { handleServiceResponse } from "../../common/utils/httpHandlers.js";
 import { coverLetterService } from "./coverLetterService.js";
 
 class CoverLetterController {
   public generate: RequestHandler = async (req: Request, res: Response) => {
     console.log("[CoverLetterController] generate called");
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     console.log("[CoverLetterController] userId:", userId);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -23,7 +24,7 @@ class CoverLetterController {
 
   public getCoverLetters: RequestHandler = async (req: Request, res: Response) => {
     console.log("[CoverLetterController] getCoverLetters called");
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -32,7 +33,7 @@ class CoverLetterController {
   };
 
   public getCoverLetter: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -42,7 +43,7 @@ class CoverLetterController {
   };
 
   public updateCoverLetter: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -53,7 +54,7 @@ class CoverLetterController {
   };
 
   public deleteCoverLetter: RequestHandler = async (req: Request, res: Response) => {
-    const userId = (req as any).auth?.userId;
+    const { userId } = getAuth(req);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
