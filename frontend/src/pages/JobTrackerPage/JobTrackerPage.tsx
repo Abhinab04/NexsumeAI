@@ -26,6 +26,7 @@ const STATUSES = [
 
 export default function JobTrackerPage() {
   const { getToken } = useAuth();
+  console.log(getToken);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
